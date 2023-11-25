@@ -34,6 +34,7 @@ public class UserForm extends javax.swing.JFrame {
             model.addRow(data);
         }
         jTable1.setModel(model);
+       
     }
 
     /**
@@ -78,7 +79,7 @@ public class UserForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1083, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -93,7 +94,7 @@ public class UserForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(createUserBtn)
                     .addComponent(jButton1))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 144, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -138,6 +139,11 @@ public class UserForm extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                     new UserForm().setVisible(true);
+//                   LoginForm log = new LoginForm(); 
+//                    log.setResizable(false);
+//                    log.setVisible(true);
+
+                    
             }
         });
     }
