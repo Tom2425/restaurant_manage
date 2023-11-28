@@ -4,59 +4,51 @@
  */
 package com.mycompany.dao;
 
+import com.mycompany.model.Dish;
 import com.mycompany.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Admin
  */
-public class UserDAO {
-
-    /**
-     *
-     * @return
-     */
-    public static List<User> getAllUsers() {
-        List<User> users = new ArrayList<User>();
+public class DishDAO {
+     public static List<Dish> getAllDishes() {
+        List<Dish> dishs = new ArrayList<Dish>();
         try {
 
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "select * from user";
+            String sql = "select * from dish";
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
             while (rs.next()) {
-                User user = new User();
-                user.setId(rs.getInt("id"));
-                user.setName(rs.getString("name"));
-                user.setAge(rs.getInt("age"));
-                user.set_Class(rs.getString("_class"));
-                user.setEmail(rs.getString("email"));
-                users.add(user);
+                Dish dish = new Dish();
+                dish.setId(rs.getInt("id"));
+                dish.setName(rs.getString("name"));
+                dish.setPrice(rs.getBigDecimal("price"));
+                dish.setType(rs.getString("type"));
+                dishs.add(dish);
             }
-            return users;
+            return dishs;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
+        return dishs;
     }
-
-    ;
-    public static void createUser(User user) {
+     public static void createUser(Dish dish) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "INSERT INTO user (name, age, email, _class) VALUES(?, ?, ?, ?)";
+            String sql = "INSERT INTO dish (name, price, type) VALUES (?, ?, ?);";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
-            preparedStatment.setString(1, user.getName());
-            preparedStatment.setInt(2, user.getAge());
-            preparedStatment.setString(3, user.getEmail());
-            preparedStatment.setString(4, user.get_Class());
+            preparedStatment.setString(1,dish.getName());
+            preparedStatment.setBigDecimal(2, dish.getPrice());
+            preparedStatment.setString(3, dish.getType());
 
             int rs = preparedStatment.executeUpdate();
             System.out.print(rs);

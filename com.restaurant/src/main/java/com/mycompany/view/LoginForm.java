@@ -4,6 +4,9 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.model.Admin;
+import com.mycompany.service.AdminService;
+
 /**
  *
  * @author Admin
@@ -32,12 +35,12 @@ public class LoginForm extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
-        jTextField3 = new javax.swing.JTextField();
+        usernameField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jButton2 = new javax.swing.JButton();
+        passwordField = new javax.swing.JPasswordField();
+        loginBtn = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
 
@@ -79,12 +82,12 @@ public class LoginForm extends javax.swing.JFrame {
         jPanel7.setPreferredSize(new java.awt.Dimension(300, 68));
         jPanel7.setLayout(new java.awt.BorderLayout(0, 10));
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        usernameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                usernameFieldActionPerformed(evt);
             }
         });
-        jPanel7.add(jTextField3, java.awt.BorderLayout.CENTER);
+        jPanel7.add(usernameField, java.awt.BorderLayout.CENTER);
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(51, 51, 51));
@@ -101,20 +104,24 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel4.setText("Password");
         jPanel6.add(jLabel4, java.awt.BorderLayout.PAGE_START);
 
-        jPasswordField1.setText("jPasswordField1");
-        jPasswordField1.addActionListener(new java.awt.event.ActionListener() {
+        passwordField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPasswordField1ActionPerformed(evt);
+                passwordFieldActionPerformed(evt);
             }
         });
-        jPanel6.add(jPasswordField1, java.awt.BorderLayout.CENTER);
+        jPanel6.add(passwordField, java.awt.BorderLayout.CENTER);
 
         jPanel5.add(jPanel6, java.awt.BorderLayout.CENTER);
 
-        jButton2.setText("jButton2");
-        jButton2.setMinimumSize(new java.awt.Dimension(73, 30));
-        jButton2.setPreferredSize(new java.awt.Dimension(73, 34));
-        jPanel5.add(jButton2, java.awt.BorderLayout.PAGE_END);
+        loginBtn.setText("Login");
+        loginBtn.setMinimumSize(new java.awt.Dimension(73, 30));
+        loginBtn.setPreferredSize(new java.awt.Dimension(73, 34));
+        loginBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginBtnActionPerformed(evt);
+            }
+        });
+        jPanel5.add(loginBtn, java.awt.BorderLayout.PAGE_END);
 
         jPanel4.add(jPanel5);
 
@@ -156,13 +163,24 @@ public class LoginForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void usernameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_usernameFieldActionPerformed
 
-    private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
+    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jPasswordField1ActionPerformed
+    }//GEN-LAST:event_passwordFieldActionPerformed
+
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+        Admin admin = AdminService.login(username, password);
+        DashBoardForm dbForm = new DashBoardForm(admin);
+        dbForm.setLocationRelativeTo(null);
+
+        dbForm.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_loginBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,7 +218,6 @@ public class LoginForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -212,7 +229,8 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JButton loginBtn;
+    private javax.swing.JPasswordField passwordField;
+    private javax.swing.JTextField usernameField;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,8 +4,14 @@
  */
 package com.mycompany.main;
 
+import com.mycompany.dao.JDBCConnection;
+import com.mycompany.model.Admin;
 import com.mycompany.view.DashBoardForm;
 import com.mycompany.view.LoginForm;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -13,12 +19,12 @@ import com.mycompany.view.LoginForm;
  */
 public class MainBoard {
      public static void main(String args[]) {
-//         LoginForm loginForm = new LoginForm();
-//         loginForm.setLocationRelativeTo(null);
-//
-//         loginForm.setVisible(true);
-            DashBoardForm dbf = new DashBoardForm();
-            dbf.setLocationRelativeTo(null);
-            dbf.setVisible(true);
+         LoginForm loginForm = new LoginForm();
+         loginForm.setLocationRelativeTo(null);
+         loginForm.setVisible(true);
+//         Admin a = new Admin();
+//         DashBoardForm dashBoardForm = new DashBoardForm(a);
+//         dashBoardForm.setLocationRelativeTo(null);
+//         dashBoardForm.setVisible(true);
      }
 }
