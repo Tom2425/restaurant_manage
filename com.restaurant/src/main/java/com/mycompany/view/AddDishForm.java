@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.view;
-import com.mycompany.view.AddImageDish;
+import com.mycompany.view.AddImageForm;
 import com.mycompany.model.Dish;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -15,7 +15,6 @@ import java.math.BigDecimal;
  * @author Tomioka
  */
 public class AddDishForm extends javax.swing.JFrame {
-    private static AddImageDish addImageDish;
 
     /**
      * Creates new form AddDishForm
@@ -41,6 +40,7 @@ public class AddDishForm extends javax.swing.JFrame {
         SubmitBtn = new javax.swing.JButton();
         dishType = new javax.swing.JLabel();
         dishTypetxt = new javax.swing.JTextField();
+        cancelBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -76,6 +76,13 @@ public class AddDishForm extends javax.swing.JFrame {
 
         dishType.setText("Phân loại:");
 
+        cancelBtn.setText("Hủy nhập");
+        cancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -88,22 +95,22 @@ public class AddDishForm extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dishNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dishPriceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addImageBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
-                                .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(72, 72, 72))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(dishTypetxt, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(dishNametxt, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                                        .addComponent(dishPricetxt)))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                            .addComponent(dishNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                            .addComponent(dishPriceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(dishTypetxt, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                            .addComponent(dishNametxt, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                            .addComponent(dishPricetxt))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(56, Short.MAX_VALUE)
+                .addComponent(cancelBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addImageBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(72, 72, 72))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,7 +130,8 @@ public class AddDishForm extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addImageBtn)
-                    .addComponent(SubmitBtn))
+                    .addComponent(SubmitBtn)
+                    .addComponent(cancelBtn))
                 .addGap(78, 78, 78))
         );
 
@@ -135,10 +143,10 @@ public class AddDishForm extends javax.swing.JFrame {
     }//GEN-LAST:event_dishNametxtActionPerformed
     
     private void addImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addImageBtnActionPerformed
-        if (addImageDish == null) {
-            addImageDish = new AddImageDish();
-        }
-        addImageDish.setVisible(true);
+
+        AddImageForm addImageForm = new AddImageForm(this, true);
+        
+        addImageForm.setVisible(true);
     }//GEN-LAST:event_addImageBtnActionPerformed
 
     private void dishPricetxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dishPricetxtActionPerformed
@@ -169,6 +177,12 @@ public class AddDishForm extends javax.swing.JFrame {
 });
 
     }//GEN-LAST:event_SubmitBtnActionPerformed
+
+    private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
+        AddDishForm addDishForm = new AddDishForm();
+        addDishForm.setDefaultCloseOperation(AddDishForm.DISPOSE_ON_CLOSE);
+        this.dispose();
+    }//GEN-LAST:event_cancelBtnActionPerformed
     
     
     /**
@@ -212,6 +226,7 @@ public class AddDishForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton SubmitBtn;
     private javax.swing.JButton addImageBtn;
+    private javax.swing.JButton cancelBtn;
     private javax.swing.JLabel dishNameLabel;
     private javax.swing.JTextField dishNametxt;
     private javax.swing.JLabel dishPriceLabel;

@@ -24,7 +24,7 @@ import java.awt.event.WindowAdapter;
  * @author Admin
  */
 public class DashBoardForm extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form DashBoardForm
      */

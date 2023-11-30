@@ -4,6 +4,7 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.view.DashBoardForm;
 import com.mycompany.model.User;
 import com.mycompany.service.UserService;
 import java.sql.SQLException;
@@ -15,7 +16,6 @@ import java.util.logging.Logger;
  * @author Admin
  */
 public class AddUserForm extends javax.swing.JFrame {
-
     /**
      * Creates new form AddUserForm
      */
@@ -153,8 +153,9 @@ public class AddUserForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
-        new UserForm().setVisible(true);
-            this.dispose();
+        AddUserForm addUserForm = new AddUserForm();
+        addUserForm.setDefaultCloseOperation(AddUserForm.DISPOSE_ON_CLOSE);
+        this.dispose();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void submitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitBtnActionPerformed
@@ -164,7 +165,8 @@ public class AddUserForm extends javax.swing.JFrame {
         user.setEmail(emailField.getText());
         user.set_Class(classField.getText());
         UserService.createUser(user);
-        new UserForm().setVisible(true);
+        UserForm userForm = new UserForm();
+        userForm.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_submitBtnActionPerformed
 
