@@ -4,6 +4,8 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.view.AddUserForm;
+import com.mycompany.view.AddDishForm;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Dish;
 import com.mycompany.service.AdminService;
@@ -15,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.WindowAdapter;
 
 /**
  *
@@ -37,8 +40,9 @@ public class DashBoardForm extends javax.swing.JFrame {
 //        GridLayout lo = new GridLayout(0, 10);
 //        grid.setLayout(lo);
 //        for (int i = 0; i < 20; i++) {
-//            grid.add(dish);
+//            grid.add(dish);   
 //        }
+        
 //
 //    // Assuming menuScroll is a JScrollPane
 //        menuScroll.setViewportView(grid);
@@ -428,11 +432,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         mainBoard.setSelectedIndex(0);    }//GEN-LAST:event_menuItemMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        AddUserForm addUserForm = new AddUserForm();
+        addUserForm.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        AddDishForm addDishForm = new AddDishForm();
+        addDishForm.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

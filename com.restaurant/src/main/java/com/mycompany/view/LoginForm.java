@@ -173,7 +173,7 @@ public class LoginForm extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         String username = usernameField.getText();
-        String password = passwordField.getText();
+        String password = new String(passwordField.getPassword());
         Admin admin = AdminService.login(username, password);
         DashBoardForm dbForm = new DashBoardForm(admin);
         dbForm.setLocationRelativeTo(null);
