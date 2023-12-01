@@ -4,6 +4,15 @@
  */
 package com.mycompany.view;
 
+import javax.swing.*;
+import javax.swing.JFileChooser;
+import java.nio.file.Path;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+
 /**
  *
  * @author Tomioka
@@ -31,6 +40,12 @@ public class AddImageForm extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        jFileChooser1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jFileChooser1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -48,7 +63,43 @@ public class AddImageForm extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooser1ActionPerformed
+        int result = jFileChooser1.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            Path selectedFilePath = jFileChooser1.getSelectedFile().toPath();
+            String selectedFilePathString = selectedFilePath.toString();
+            System.out.println(selectedFilePathString);
+            saveImage(selectedFilePathString);
+        }
+        
+        AddImageForm addImageForm = new AddImageForm(new javax.swing.JFrame(), true);
+        addImageForm.setDefaultCloseOperation(AddImageForm.DISPOSE_ON_CLOSE);
+        this.dispose();
+    }//GEN-LAST:event_jFileChooser1ActionPerformed
+   
+    public void saveImage(String selectedFilePathString) {
+        
+        if (selectedFilePathString != null && !selectedFilePathString.isEmpty()) {
+            try {
+                File file = new File(selectedFilePathString);
+                BufferedImage image = ImageIO.read(file);
+                
+                String userDir = System.getProperty("user.dir");
+                File output = new File("C:/Users/minhp/restaurant_manage/com.restaurant/assets/imgage/saveImage.jpg");
+                output.mkdirs();
+                
+                ImageIO.write(image, "jpg", output);
 
+                JOptionPane.showMessageDialog(this, "Image saved successfully!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error saving image.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No image selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -75,9 +126,10 @@ public class AddImageForm extends javax.swing.JDialog {
             java.util.logging.Logger.getLogger(AddImageForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            
             public void run() {
                 AddImageForm dialog = new AddImageForm(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

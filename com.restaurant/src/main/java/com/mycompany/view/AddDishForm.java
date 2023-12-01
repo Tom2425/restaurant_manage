@@ -15,7 +15,8 @@ import java.math.BigDecimal;
  * @author Tomioka
  */
 public class AddDishForm extends javax.swing.JFrame {
-
+    private static AddDishForm addDishForm;
+    
     /**
      * Creates new form AddDishForm
      */
@@ -179,8 +180,7 @@ public class AddDishForm extends javax.swing.JFrame {
     }//GEN-LAST:event_SubmitBtnActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
-        AddDishForm addDishForm = new AddDishForm();
-        addDishForm.setDefaultCloseOperation(AddDishForm.DISPOSE_ON_CLOSE);
+        new AddDishForm().setDefaultCloseOperation(AddDishForm.DISPOSE_ON_CLOSE);
         this.dispose();
     }//GEN-LAST:event_cancelBtnActionPerformed
     
@@ -189,6 +189,8 @@ public class AddDishForm extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -215,13 +217,15 @@ public class AddDishForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddDishForm addDishForm = new AddDishForm();
-                addDishForm.setVisible(true);
-                addDishForm.setLocationRelativeTo(null);
+                new AddDishForm().setVisible(true);
+                new AddDishForm().setLocationRelativeTo(null);
+                
             }
         });
         
+        
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton SubmitBtn;
