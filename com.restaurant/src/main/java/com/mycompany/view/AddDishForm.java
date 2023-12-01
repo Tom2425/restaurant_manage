@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.view;
+
+import com.mycompany.view.DishForm;
 import com.mycompany.view.AddImageForm;
 import com.mycompany.model.Dish;
 import java.awt.event.ActionListener;
@@ -174,9 +176,11 @@ public class AddDishForm extends javax.swing.JFrame {
                 dishNametxt.setText("");
                 dishPricetxt.setText("");
                 dishTypetxt.setText("");
-    }
-});
-
+            }
+        });
+        DishForm dishForm = new DishForm();
+        dishForm.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_SubmitBtnActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed

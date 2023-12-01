@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.util.Random;
 
 
 /**
@@ -85,8 +86,10 @@ public class AddImageForm extends javax.swing.JDialog {
                 File file = new File(selectedFilePathString);
                 BufferedImage image = ImageIO.read(file);
                 
+                Random random = new Random();
+                String imgage = new String(random + ".jpg");
                 String userDir = System.getProperty("user.dir");
-                File output = new File("C:/Users/minhp/restaurant_manage/com.restaurant/assets/imgage/saveImage.jpg");
+                File output = new File(userDir + File.separator + "assets" + File.separator + "image" + File.separator + imgage);
                 output.mkdirs();
                 
                 ImageIO.write(image, "jpg", output);
