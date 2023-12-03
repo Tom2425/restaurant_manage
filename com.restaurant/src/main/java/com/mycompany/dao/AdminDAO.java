@@ -19,7 +19,8 @@ import java.util.List;
  * @author Admin
  */
 public class AdminDAO {
-    public static List<Admin> getAllAdmins(){
+
+    public static List<Admin> getAllAdmins() {
         List<Admin> admins = new ArrayList<Admin>();
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
@@ -27,13 +28,11 @@ public class AdminDAO {
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
             while (rs.next()) {
-                System.out.print(rs.getString("phone"));
                 Admin admin = new Admin();
                 admin.setId(rs.getInt("id"));
                 admin.setName(rs.getString("name"));
                 admin.setPhone(rs.getString("phone"));
                 admin.setRole(rs.getString("role"));
-                System.out.print(admin.toString());
                 admins.add(admin);
             }
             return admins;
@@ -42,6 +41,51 @@ public class AdminDAO {
         }
         return admins;
     }
+    public static Admin getByUsername(String username){
+        Admin admin = new Admin();
+        try {
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "select * from admin where username = ?";
+            PreparedStatement preparedStatment = connect.prepareStatement(sql);
+
+            preparedStatment.setString(1, username);
+            ResultSet rs = preparedStatment.executeQuery();
+            while (rs.next()) {
+                admin.setId(rs.getInt("id"));
+                admin.setName(rs.getString("name"));
+                admin.setPhone(rs.getString("phone"));
+                admin.setRole(rs.getString("role"));
+                admin.setPassword(rs.getString("password"));
+                System.out.println(admin.toString());
+                return admin;
+            }
+            return null;
+                
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static void createAdmin(Admin admin) {
+        try {
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "INSERT INTO admin (name, username, password, role, phone) VALUES(?, ?, ?, ?, ?)";
+            System.out.print(admin.toString());
+            PreparedStatement preparedStatment = connect.prepareStatement(sql);
+            preparedStatment.setString(1, admin.getName());
+            preparedStatment.setString(2, admin.getUsername());
+            preparedStatment.setString(3, admin.getPassword());
+            preparedStatment.setString(4, admin.getRole());
+            preparedStatment.setString(5, admin.getPhone());
+            int rs = preparedStatment.executeUpdate();
+            System.out.print(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static Admin login(String username, String password) {
         Admin a = new Admin();
         try {
@@ -67,6 +111,5 @@ public class AdminDAO {
         }
         return a;
     }
-    
 
 }

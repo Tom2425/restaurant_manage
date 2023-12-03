@@ -4,26 +4,68 @@
  */
 package com.mycompany.view;
 
-import com.mycompany.view.DishForm;
-import com.mycompany.view.AddImageForm;
 import com.mycompany.model.Dish;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import com.mycompany.service.DishService;
 import java.math.BigDecimal;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 /**
  *
- * @author Tomioka
+ * @author Admin
  */
 public class AddDishForm extends javax.swing.JFrame {
-    private static AddDishForm addDishForm;
-    
+    private DashBoardForm dashBoard;
     /**
-     * Creates new form AddDishForm
+     * Creates new form AddDish
      */
     public AddDishForm() {
+         initComponents();
+    }
+    public AddDishForm(DashBoardForm dashBoard){
+        this.dashBoard = dashBoard;
         initComponents();
+        
+    }
+
+    public boolean validatePriceField() {
+        String value = priceField.getText();
+        if (value.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Price field mustn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        try {
+            Double.valueOf(value);
+            return true;
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Price field must be positive number", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+    }
+
+    public boolean validateNameField() {
+        String value = nameField.getText();
+
+        if (!value.trim().isEmpty()) {
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(this, "Name field mustn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+    }
+
+    public boolean validateTypeField() {
+        String value = typeField.getText();
+
+        if (!value.trim().isEmpty()) {
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(this, "Type field mustn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     /**
@@ -35,166 +77,183 @@ public class AddDishForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        dishNameLabel = new javax.swing.JLabel();
-        dishPriceLabel = new javax.swing.JLabel();
-        addImageBtn = new javax.swing.JButton();
-        dishNametxt = new javax.swing.JTextField();
-        dishPricetxt = new javax.swing.JTextField();
-        SubmitBtn = new javax.swing.JButton();
-        dishType = new javax.swing.JLabel();
-        dishTypetxt = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        nameField = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        priceField = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        typeField = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
         cancelBtn = new javax.swing.JButton();
+        addDishBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBounds(new java.awt.Rectangle(10, 100, 0, 0));
 
-        dishNameLabel.setText("Tên món:");
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
-        dishPriceLabel.setText("Giá tiền:");
+        jPanel1.setToolTipText("");
+        jPanel1.setMinimumSize(new java.awt.Dimension(85, 50));
+        jPanel1.setPreferredSize(new java.awt.Dimension(370, 50));
 
-        addImageBtn.setText("Thêm ảnh");
-        addImageBtn.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setText("Add dish");
+        jPanel1.add(jLabel1);
+
+        jPanel4.add(jPanel1, java.awt.BorderLayout.PAGE_START);
+
+        jPanel2.setPreferredSize(new java.awt.Dimension(277, 227));
+        jPanel2.setLayout(new java.awt.GridLayout(0, 1));
+
+        jPanel6.setLayout(new java.awt.BorderLayout());
+
+        jLabel2.setText("Name: ");
+        jLabel2.setRequestFocusEnabled(false);
+        jPanel6.add(jLabel2, java.awt.BorderLayout.WEST);
+
+        nameField.setPreferredSize(new java.awt.Dimension(220, 22));
+        nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addImageBtnActionPerformed(evt);
+                nameFieldActionPerformed(evt);
             }
         });
+        jPanel6.add(nameField, java.awt.BorderLayout.EAST);
 
-        dishNametxt.addActionListener(new java.awt.event.ActionListener() {
+        jPanel2.add(jPanel6);
+
+        jPanel7.setLayout(new java.awt.BorderLayout());
+
+        jLabel3.setText("Price: ");
+        jLabel3.setRequestFocusEnabled(false);
+        jPanel7.add(jLabel3, java.awt.BorderLayout.WEST);
+
+        priceField.setPreferredSize(new java.awt.Dimension(220, 22));
+        priceField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dishNametxtActionPerformed(evt);
+                priceFieldActionPerformed(evt);
             }
         });
+        jPanel7.add(priceField, java.awt.BorderLayout.EAST);
 
-        dishPricetxt.addActionListener(new java.awt.event.ActionListener() {
+        jPanel2.add(jPanel7);
+
+        jPanel8.setLayout(new java.awt.BorderLayout());
+
+        jLabel4.setText("Type:  ");
+        jLabel4.setRequestFocusEnabled(false);
+        jPanel8.add(jLabel4, java.awt.BorderLayout.WEST);
+
+        typeField.setPreferredSize(new java.awt.Dimension(220, 22));
+        typeField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dishPricetxtActionPerformed(evt);
+                typeFieldActionPerformed(evt);
             }
         });
+        jPanel8.add(typeField, java.awt.BorderLayout.EAST);
 
-        SubmitBtn.setText("Nhập");
-        SubmitBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SubmitBtnActionPerformed(evt);
-            }
-        });
+        jPanel2.add(jPanel8);
 
-        dishType.setText("Phân loại:");
+        jPanel4.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        cancelBtn.setText("Hủy nhập");
+        jPanel3.setPreferredSize(new java.awt.Dimension(100, 50));
+
+        cancelBtn.setText("Cancel");
         cancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelBtnActionPerformed(evt);
             }
         });
 
+        addDishBtn.setText("Add");
+        addDishBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDishBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
+                .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(21, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelBtn)
+                    .addComponent(addDishBtn))
+                .addContainerGap())
+        );
+
+        jPanel4.add(jPanel3, java.awt.BorderLayout.PAGE_END);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(65, 65, 65)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(dishType)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dishNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                            .addComponent(dishPriceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dishTypetxt, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                            .addComponent(dishNametxt, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                            .addComponent(dishPricetxt))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(56, Short.MAX_VALUE)
-                .addComponent(cancelBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addImageBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72))
+                .addContainerGap(21, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(74, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dishNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dishNametxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dishPriceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dishPricetxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dishType)
-                    .addComponent(dishTypetxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addImageBtn)
-                    .addComponent(SubmitBtn)
-                    .addComponent(cancelBtn))
-                .addGap(78, 78, 78))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void dishNametxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dishNametxtActionPerformed
-    
-    }//GEN-LAST:event_dishNametxtActionPerformed
-    
-    private void addImageBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addImageBtnActionPerformed
-
-        AddImageForm addImageForm = new AddImageForm(this, true);
-        
-        addImageForm.setVisible(true);
-    }//GEN-LAST:event_addImageBtnActionPerformed
-
-    private void dishPricetxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dishPricetxtActionPerformed
+    private void nameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_dishPricetxtActionPerformed
-    private Dish monMoi;
-    private void SubmitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitBtnActionPerformed
-        SubmitBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Lấy dữ liệu từ các trường văn bản
-                String ten = dishNametxt.getText();
-                BigDecimal gia = new BigDecimal(dishPricetxt.getText());
-                String loai = dishTypetxt.getText();
+    }//GEN-LAST:event_nameFieldActionPerformed
 
-                // Tạo một đối tượng Dish mới
-                monMoi = new Dish(ten, gia, loai);
+    private void priceFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_priceFieldActionPerformed
 
-                // Thực hiện bất kỳ xử lý hoặc hành động nào khác cần thiết
-                // Ví dụ, bạn có thể in chi tiết của món hoặc lưu vào cơ sở dữ liệu
-                System.out.println(monMoi);
-
-                // Đặt lại các trường văn bản nếu cần
-                dishNametxt.setText("");
-                dishPricetxt.setText("");
-                dishTypetxt.setText("");
-            }
-        });
-        DishForm dishForm = new DishForm();
-        dishForm.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_SubmitBtnActionPerformed
+    private void typeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_typeFieldActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
-        new AddDishForm().setDefaultCloseOperation(AddDishForm.DISPOSE_ON_CLOSE);
-        this.dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_cancelBtnActionPerformed
-    
-    
+
+    private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
+        Dish dish = new Dish();
+        if ( validateNameField() && validatePriceField() && validateTypeField()) {
+            dish.setName(nameField.getText());
+            dish.setPrice(BigDecimal.valueOf(Double.valueOf(priceField.getText())));
+            dish.setType(typeField.getText());
+            DishService.createDish(dish);
+            this.setVisible(false);
+            this.dashBoard.handleMenuTable();
+        }
+
+    }//GEN-LAST:event_addDishBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
-        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -217,29 +276,32 @@ public class AddDishForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(AddDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new AddDishForm().setVisible(true);
-                new AddDishForm().setLocationRelativeTo(null);
-                
             }
         });
-        
-        
     }
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton SubmitBtn;
-    private javax.swing.JButton addImageBtn;
+    private javax.swing.JButton addDishBtn;
     private javax.swing.JButton cancelBtn;
-    private javax.swing.JLabel dishNameLabel;
-    private javax.swing.JTextField dishNametxt;
-    private javax.swing.JLabel dishPriceLabel;
-    private javax.swing.JTextField dishPricetxt;
-    private javax.swing.JLabel dishType;
-    private javax.swing.JTextField dishTypetxt;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JTextField nameField;
+    private javax.swing.JTextField priceField;
+    private javax.swing.JTextField typeField;
     // End of variables declaration//GEN-END:variables
 }

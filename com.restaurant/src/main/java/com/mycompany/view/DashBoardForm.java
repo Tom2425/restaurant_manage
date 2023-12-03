@@ -4,8 +4,6 @@
  */
 package com.mycompany.view;
 
-import com.mycompany.view.AddUserForm;
-import com.mycompany.view.AddDishForm;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Dish;
 import com.mycompany.service.AdminService;
@@ -17,14 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.WindowAdapter;
 
 /**
  *
  * @author Admin
  */
 public class DashBoardForm extends javax.swing.JFrame {
-    
+
     /**
      * Creates new form DashBoardForm
      */
@@ -40,32 +37,33 @@ public class DashBoardForm extends javax.swing.JFrame {
 //        GridLayout lo = new GridLayout(0, 10);
 //        grid.setLayout(lo);
 //        for (int i = 0; i < 20; i++) {
-//            grid.add(dish);   
+//            grid.add(dish);
 //        }
-        
 //
 //    // Assuming menuScroll is a JScrollPane
 //        menuScroll.setViewportView(grid);
     }
-    public void handleMenuTable(){
+
+    public void handleMenuTable() {
         List<Dish> menu = DishService.getAllDishes();
         DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
         model.setRowCount(0);
 
-        for(Dish dish : menu){
-            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish)+1),dish.getName(), String.valueOf(dish.getPrice()),dish.getType()});
+        for (Dish dish : menu) {
+            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getName(), String.valueOf(dish.getPrice()), dish.getType()});
         }
     }
-    public void handlStaffTable(){
+
+    public void handlStaffTable() {
         List<Admin> admins = AdminService.getAllAdmins();
-        System.out.print(admins.size());
         DefaultTableModel model = (DefaultTableModel) staffTable.getModel();
         model.setRowCount(0);
 
-        for(Admin admin : admins){
-            model.addRow(new Object[]{String.valueOf(admins.indexOf(admin)+1),admin.getName(), admin.getRole(),admin.getPhone()});
+        for (Admin admin : admins) {
+            model.addRow(new Object[]{String.valueOf(admins.indexOf(admin) + 1), admin.getName(), admin.getRole(), admin.getPhone()});
         }
     }
+
     public void costomComponents() {
         adminNameLabel.setText(adminNameLabel.getText() + admin.getName());
         adminRoleLabel.setText(adminRoleLabel.getText() + admin.getRole());
@@ -95,13 +93,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         menuTab = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         menuTable = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        addDishBtn = new javax.swing.JButton();
+        removeDishBtn = new javax.swing.JButton();
         stafftab = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         staffTable = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        addStaffBtn = new javax.swing.JButton();
+        removeStaffBtn = new javax.swing.JButton();
         tabletab = new javax.swing.JPanel();
         tableTable = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -179,17 +177,17 @@ public class DashBoardForm extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(menuTable);
 
-        jButton2.setText("Add");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        addDishBtn.setText("Add");
+        addDishBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                addDishBtnActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Remove");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        removeDishBtn.setText("Remove");
+        removeDishBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                removeDishBtnActionPerformed(evt);
             }
         });
 
@@ -199,17 +197,17 @@ public class DashBoardForm extends javax.swing.JFrame {
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(menuTabLayout.createSequentialGroup()
-                .addComponent(jButton2)
+                .addComponent(addDishBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addComponent(removeDishBtn)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         menuTabLayout.setVerticalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(menuTabLayout.createSequentialGroup()
                 .addGroup(menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(removeDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
         );
@@ -229,17 +227,17 @@ public class DashBoardForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(staffTable);
 
-        jButton1.setText("Add");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addStaffBtn.setText("Add");
+        addStaffBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addStaffBtnActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Remove");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        removeStaffBtn.setText("Remove");
+        removeStaffBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                removeStaffBtnActionPerformed(evt);
             }
         });
 
@@ -249,9 +247,9 @@ public class DashBoardForm extends javax.swing.JFrame {
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(stafftabLayout.createSequentialGroup()
-                .addComponent(jButton1)
+                .addComponent(addStaffBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                .addComponent(removeStaffBtn)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         stafftabLayout.setVerticalGroup(
@@ -259,8 +257,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, stafftabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(removeStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -431,36 +429,36 @@ public class DashBoardForm extends javax.swing.JFrame {
         title.setText("Menu");
         mainBoard.setSelectedIndex(0);    }//GEN-LAST:event_menuItemMouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        AddUserForm addUserForm = new AddUserForm();
-        addUserForm.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void addStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStaffBtnActionPerformed
+        AddStaffForm addStaffForm = new AddStaffForm(this);
+        addStaffForm.setLocationRelativeTo(null);
+        addStaffForm.setVisible(true);
+    }//GEN-LAST:event_addStaffBtnActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        AddDishForm addDishForm = new AddDishForm();
+    private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
+        AddDishForm addDishForm = new AddDishForm(this);
+        addDishForm.setLocationRelativeTo(null);
         addDishForm.setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_addDishBtnActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void removeDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDishBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_removeDishBtnActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void removeStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeStaffBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_removeStaffBtnActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addDishBtn;
+    private javax.swing.JButton addStaffBtn;
     private javax.swing.JLabel adminNameLabel;
     private javax.swing.JLabel adminRoleLabel;
     private javax.swing.JPanel dish;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -482,6 +480,8 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JPanel menuItem;
     private javax.swing.JPanel menuTab;
     private javax.swing.JTable menuTable;
+    private javax.swing.JButton removeDishBtn;
+    private javax.swing.JButton removeStaffBtn;
     private javax.swing.JPanel staffItem;
     private javax.swing.JTable staffTable;
     private javax.swing.JPanel stafftab;

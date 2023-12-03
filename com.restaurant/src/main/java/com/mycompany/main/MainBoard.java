@@ -6,6 +6,8 @@ package com.mycompany.main;
 
 import com.mycompany.dao.JDBCConnection;
 import com.mycompany.model.Admin;
+import com.mycompany.view.AddDishForm;
+import com.mycompany.view.AddStaffForm;
 import com.mycompany.view.DashBoardForm;
 import com.mycompany.view.LoginForm;
 import java.sql.Connection;
@@ -18,13 +20,11 @@ import java.sql.Statement;
  * @author Admin
  */
 public class MainBoard {
-     public static void main(String args[]) {
-         LoginForm loginForm = new LoginForm();
-         loginForm.setLocationRelativeTo(null);
-         loginForm.setVisible(true);
-//         Admin a = new Admin();
-//         DashBoardForm dashBoardForm = new DashBoardForm(a);
-//         dashBoardForm.setLocationRelativeTo(null);
-//         dashBoardForm.setVisible(true);
-     }
+
+    public static void main(String args[]) {
+        LoginForm loginForm = new LoginForm();
+        loginForm.setLocationRelativeTo(null);
+        loginForm.setVisible(true);
+      
+    }
 }

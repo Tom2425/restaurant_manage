@@ -18,7 +18,7 @@ public class DishService {
         List<Dish> menu = DishDAO.getAllDishes();
         return menu;
     }
-    public static void createUser(Dish dish){
-        DishDAO.createUser(dish);
+    public static void createDish(Dish dish){
+        DishDAO.createDish(dish);
     }
 }

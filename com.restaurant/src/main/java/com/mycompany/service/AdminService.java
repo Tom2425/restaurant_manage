@@ -21,4 +21,11 @@ public class AdminService {
         List<Admin> admins = AdminDAO.getAllAdmins();
         return admins;
     }
+    static public void createAdmin(Admin admin){
+        AdminDAO.createAdmin(admin);
+    }
+    static public Admin getByUsername(String username){
+        Admin a = AdminDAO.getByUsername( username);
+        return a;
+    }
 }
