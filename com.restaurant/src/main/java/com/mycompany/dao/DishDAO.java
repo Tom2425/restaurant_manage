@@ -41,7 +41,7 @@ public class DishDAO {
         }
         return dishs;
     }
-     public static void createUser(Dish dish) {
+     public static void createDish(Dish dish) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO dish (name, price, type) VALUES (?, ?, ?);";
