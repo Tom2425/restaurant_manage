@@ -25,6 +25,7 @@ public class MainBoard {
         LoginForm loginForm = new LoginForm();
         loginForm.setLocationRelativeTo(null);
         loginForm.setVisible(true);
+
       
     }
 }

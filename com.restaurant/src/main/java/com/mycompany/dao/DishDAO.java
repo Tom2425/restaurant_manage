@@ -6,11 +6,14 @@ package com.mycompany.dao;
 
 import com.mycompany.model.Dish;
 import com.mycompany.model.User;
+import java.io.ByteArrayInputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,8 @@ import java.util.List;
  * @author Admin
  */
 public class DishDAO {
-     public static List<Dish> getAllDishes() {
+
+    public static List<Dish> getAllDishes() {
         List<Dish> dishs = new ArrayList<Dish>();
         try {
 
@@ -32,7 +36,13 @@ public class DishDAO {
                 dish.setId(rs.getInt("id"));
                 dish.setName(rs.getString("name"));
                 dish.setPrice(rs.getBigDecimal("price"));
-                dish.setType(rs.getString("type"));
+                dish.setCategory(rs.getString("category"));
+                Blob blob = rs.getBlob("image");
+                if (blob != null) {
+                    int blobLength = (int) blob.length();
+                    byte[] imageBytes = blob.getBytes(1, blobLength);
+                    dish.setImage(imageBytes);
+                }
                 dishs.add(dish);
             }
             return dishs;
@@ -41,15 +51,23 @@ public class DishDAO {
         }
         return dishs;
     }
-     public static void createDish(Dish dish) {
+
+    public static void createDish(Dish dish) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "INSERT INTO dish (name, price, type) VALUES (?, ?, ?);";
+            String sql = "INSERT INTO dish (name, price, category ,image) VALUES (?, ?, ?, ?);";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
-            preparedStatment.setString(1,dish.getName());
+            preparedStatment.setString(1, dish.getName());
             preparedStatment.setBigDecimal(2, dish.getPrice());
-            preparedStatment.setString(3, dish.getType());
+            preparedStatment.setString(3, dish.getCategory());
+            if (dish.getImage() != null) {
+                ByteArrayInputStream imageStream = new ByteArrayInputStream(dish.getImage());
+                preparedStatment.setBinaryStream(4, imageStream);
 
+            } else {
+                System.out.print("Image is null");
+                preparedStatment.setNull(4, Types.BLOB);
+            }
             int rs = preparedStatment.executeUpdate();
             System.out.print(rs);
         } catch (SQLException e) {

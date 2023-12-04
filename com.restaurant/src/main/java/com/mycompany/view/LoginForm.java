@@ -6,6 +6,7 @@ package com.mycompany.view;
 
 import com.mycompany.model.Admin;
 import com.mycompany.service.AdminService;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -64,7 +65,7 @@ public class LoginForm extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(21, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
@@ -173,14 +174,31 @@ public class LoginForm extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         String username = usernameField.getText();
-        String password = passwordField.getText();
-        Admin admin = AdminService.login(username, password);
-        DashBoardForm dbForm = new DashBoardForm(admin);
-        dbForm.setLocationRelativeTo(null);
+        String password = String.valueOf(passwordField.getPassword());
+        Admin adminAuth = login(username, password);
+        if (adminAuth != null) {
+            DashBoardForm dbForm = new DashBoardForm(adminAuth);
+            dbForm.setLocationRelativeTo(null);
+            dbForm.setVisible(true);
+            this.dispose();
+        }
 
-        dbForm.setVisible(true);
-        this.dispose();
+
     }//GEN-LAST:event_loginBtnActionPerformed
+    private Admin login(String username, String password) {
+        Admin admin = AdminService.getByUsername(username);
+        if (admin == null) {
+            JOptionPane.showMessageDialog(this, "Incorrect username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        } else {
+            if (password.equals(admin.getPassword())) {
+                return admin;
+            }
+            JOptionPane.showMessageDialog(this, "Incorrect username or password", "Login Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+    }
 
     /**
      * @param args the command line arguments

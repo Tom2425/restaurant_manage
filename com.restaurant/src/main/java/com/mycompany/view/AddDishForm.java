@@ -6,10 +6,24 @@ package com.mycompany.view;
 
 import com.mycompany.model.Dish;
 import com.mycompany.service.DishService;
+import com.mycompany.util.HandleImage;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -22,10 +36,12 @@ public class AddDishForm extends javax.swing.JFrame {
      */
     public AddDishForm() {
          initComponents();
+         customeConponent();
     }
     public AddDishForm(DashBoardForm dashBoard){
         this.dashBoard = dashBoard;
         initComponents();
+        customeConponent();
         
     }
 
@@ -57,8 +73,8 @@ public class AddDishForm extends javax.swing.JFrame {
 
     }
 
-    public boolean validateTypeField() {
-        String value = typeField.getText();
+    public boolean validateCategoryField() {
+        String value = categoryField.getText();
 
         if (!value.trim().isEmpty()) {
             return true;
@@ -66,8 +82,36 @@ public class AddDishForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Type field mustn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-    }
+    }  
+   private void loadImage(String imagePath,boolean isAbsolutePath) {
+        try {
+            File selectedFile = null;
+            if(isAbsolutePath == false){
+                URL url = getClass().getResource(imagePath);
+                selectedFile = new File(url.getPath());
+            }
+            else{
+                 
+                selectedFile = new File(imagePath);
+            }
+           
+            BufferedImage originalImage = ImageIO.read(selectedFile);
 
+            int labelWidth = imageLabel.getWidth();
+            int labelHeight = imageLabel.getHeight();
+            ImageIcon icon = new ImageIcon(originalImage);
+            HandleImage.adjustImageSizeByWidth(imageLabel, icon);
+
+//            imageLabel.setIcon(icon);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading image: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+ 
+    private void customeConponent(){
+       loadImage("/image/image.png", false);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -77,9 +121,12 @@ public class AddDishForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel5 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jPanel10 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -89,15 +136,42 @@ public class AddDishForm extends javax.swing.JFrame {
         priceField = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        typeField = new javax.swing.JTextField();
+        categoryField = new javax.swing.JTextField();
+        jPanel11 = new javax.swing.JPanel();
+        imageLabel = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         cancelBtn = new javax.swing.JButton();
         addDishBtn = new javax.swing.JButton();
 
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        jPanel9.setPreferredSize(new java.awt.Dimension(355, 200));
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 355, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 61, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(10, 100, 0, 0));
 
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel1.setToolTipText("");
         jPanel1.setMinimumSize(new java.awt.Dimension(85, 50));
@@ -107,8 +181,11 @@ public class AddDishForm extends javax.swing.JFrame {
         jLabel1.setText("Add dish");
         jPanel1.add(jLabel1);
 
-        jPanel4.add(jPanel1, java.awt.BorderLayout.PAGE_START);
+        jPanel4.add(jPanel1);
 
+        jPanel10.setLayout(new javax.swing.BoxLayout(jPanel10, javax.swing.BoxLayout.LINE_AXIS));
+
+        jPanel2.setMinimumSize(new java.awt.Dimension(122, 100));
         jPanel2.setPreferredSize(new java.awt.Dimension(277, 227));
         jPanel2.setLayout(new java.awt.GridLayout(0, 1));
 
@@ -146,21 +223,54 @@ public class AddDishForm extends javax.swing.JFrame {
 
         jPanel8.setLayout(new java.awt.BorderLayout());
 
-        jLabel4.setText("Type:  ");
+        jLabel4.setText("Category:  ");
         jLabel4.setRequestFocusEnabled(false);
         jPanel8.add(jLabel4, java.awt.BorderLayout.WEST);
 
-        typeField.setPreferredSize(new java.awt.Dimension(220, 22));
-        typeField.addActionListener(new java.awt.event.ActionListener() {
+        categoryField.setPreferredSize(new java.awt.Dimension(220, 22));
+        categoryField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                typeFieldActionPerformed(evt);
+                categoryFieldActionPerformed(evt);
             }
         });
-        jPanel8.add(typeField, java.awt.BorderLayout.EAST);
+        jPanel8.add(categoryField, java.awt.BorderLayout.EAST);
 
         jPanel2.add(jPanel8);
 
-        jPanel4.add(jPanel2, java.awt.BorderLayout.CENTER);
+        jPanel10.add(jPanel2);
+
+        jPanel11.setPreferredSize(new java.awt.Dimension(120, 153));
+
+        jButton1.setText("Upload ");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap(60, Short.MAX_VALUE)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                    .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(65, 65, 65))
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1))
+        );
+
+        jPanel10.add(jPanel11);
+
+        jPanel4.add(jPanel10);
 
         jPanel3.setPreferredSize(new java.awt.Dimension(100, 50));
 
@@ -183,38 +293,38 @@ public class AddDishForm extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
+                .addGap(219, 219, 219)
                 .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49))
+                .addContainerGap(225, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelBtn)
-                    .addComponent(addDishBtn))
+                    .addComponent(addDishBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jPanel4.add(jPanel3, java.awt.BorderLayout.PAGE_END);
+        jPanel4.add(jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addContainerGap(17, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -229,9 +339,9 @@ public class AddDishForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_priceFieldActionPerformed
 
-    private void typeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeFieldActionPerformed
+    private void categoryFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_typeFieldActionPerformed
+    }//GEN-LAST:event_categoryFieldActionPerformed
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
         this.setVisible(false);
@@ -239,16 +349,40 @@ public class AddDishForm extends javax.swing.JFrame {
 
     private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
         Dish dish = new Dish();
-        if ( validateNameField() && validatePriceField() && validateTypeField()) {
+        File imageFile = new File(imagePath);
+        try {
+            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+            if ( validateNameField() && validatePriceField() && validateCategoryField()) {
             dish.setName(nameField.getText());
             dish.setPrice(BigDecimal.valueOf(Double.valueOf(priceField.getText())));
-            dish.setType(typeField.getText());
+            dish.setCategory(categoryField.getText());
+            dish.setImage(imageBytes);
             DishService.createDish(dish);
             this.setVisible(false);
             this.dashBoard.handleMenuTable();
         }
+        } catch (IOException ex) {
+            Logger.getLogger(AddDishForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
 
     }//GEN-LAST:event_addDishBtnActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // using this code you can brows image and image set to lable
+        
+        JFileChooser fchooser=new JFileChooser();
+        fchooser.showOpenDialog(null);
+        FileNameExtensionFilter fnwf = new FileNameExtensionFilter("PNG JPG AND JPEG","png","jpg","and","jpeg");
+        int load = fchooser.showOpenDialog(null);
+        if(load == fchooser.APPROVE_OPTION){
+            File f = fchooser.getSelectedFile();
+            String path = f.getAbsolutePath();
+            imagePath = path;
+            loadImage(path,true);
+        }
+ 
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -285,23 +419,29 @@ public class AddDishForm extends javax.swing.JFrame {
             }
         });
     }
-
+    private String imagePath;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDishBtn;
     private javax.swing.JButton cancelBtn;
+    private javax.swing.JTextField categoryField;
+    private javax.swing.JLabel imageLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JTextField nameField;
     private javax.swing.JTextField priceField;
-    private javax.swing.JTextField typeField;
     // End of variables declaration//GEN-END:variables
 }

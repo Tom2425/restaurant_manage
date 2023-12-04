@@ -8,13 +8,30 @@ import com.mycompany.model.Admin;
 import com.mycompany.model.Dish;
 import com.mycompany.service.AdminService;
 import com.mycompany.service.DishService;
+import com.mycompany.util.HandleImage;
+import com.mycompany.util.ImageRenderer;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -48,12 +65,53 @@ public class DashBoardForm extends javax.swing.JFrame {
         List<Dish> menu = DishService.getAllDishes();
         DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
         model.setRowCount(0);
-
+        menuTable.getColumn("Image").setCellRenderer(new CellRenderer());
+        String imagePath = "/image/image.png";
+       
         for (Dish dish : menu) {
-            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getName(), String.valueOf(dish.getPrice()), dish.getType()});
+              JLabel imageLabel = new JLabel();   
+             BufferedImage originalImage = null;
+            if(dish.getImage() == null){
+                 URL url = getClass().getResource(imagePath);
+                File file = new File(url.getPath());
+                
+                 try {
+                     originalImage = ImageIO.read(file);
+                 } catch (IOException ex) {
+                     Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+               
+            }
+            else{
+                   originalImage = dish.getImageAsBufferedImage();
+            }
+            Image scaledImage = HandleImage.getScaledImage(originalImage, 50, 50);
+            ImageIcon icon = new ImageIcon(scaledImage);
+            imageLabel.setIcon(icon);
+            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getName(), String.valueOf(dish.getPrice()), dish.getCategory(),imageLabel});
         }
+       
     }
-
+    class CellRenderer implements TableCellRenderer {
+ 
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                Object value,
+                boolean isSelected,
+                boolean hasFocus,
+                int row,
+                int column) {
+ 
+            TableColumn tb = menuTable.getColumn("Image");
+            tb.setMaxWidth(50);
+            tb.setMinWidth(50);
+ 
+            menuTable.setRowHeight(60);
+ 
+            return (Component) value;
+        }
+ 
+    }
     public void handlStaffTable() {
         List<Admin> admins = AdminService.getAllAdmins();
         DefaultTableModel model = (DefaultTableModel) staffTable.getModel();
@@ -101,7 +159,8 @@ public class DashBoardForm extends javax.swing.JFrame {
         addStaffBtn = new javax.swing.JButton();
         removeStaffBtn = new javax.swing.JButton();
         tabletab = new javax.swing.JPanel();
-        tableTable = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jToggleButton1 = new javax.swing.JToggleButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -166,13 +225,13 @@ public class DashBoardForm extends javax.swing.JFrame {
 
         menuTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "SR", "Name", "Price", "Type"
+                "SR", "Name", "Price", "Category", "Image"
             }
         ));
         jScrollPane2.setViewportView(menuTable);
@@ -255,33 +314,33 @@ public class DashBoardForm extends javax.swing.JFrame {
         stafftabLayout.setVerticalGroup(
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, stafftabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(addStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(removeStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(removeStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainBoard.addTab("tab2", stafftab);
 
-        tableTable.setText("tab3");
+        jToggleButton1.setText("jToggleButton1");
+        jPanel6.add(jToggleButton1);
 
         javax.swing.GroupLayout tabletabLayout = new javax.swing.GroupLayout(tabletab);
         tabletab.setLayout(tabletabLayout);
         tabletabLayout.setHorizontalGroup(
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabletabLayout.createSequentialGroup()
-                .addContainerGap(315, Short.MAX_VALUE)
-                .addComponent(tableTable)
-                .addGap(261, 261, 261))
+            .addGroup(tabletabLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(147, Short.MAX_VALUE))
         );
         tabletabLayout.setVerticalGroup(
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tabletabLayout.createSequentialGroup()
-                .addGap(104, 104, 104)
-                .addComponent(tableTable)
-                .addContainerGap(328, Short.MAX_VALUE))
+                .addGap(35, 35, 35)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(213, Short.MAX_VALUE))
         );
 
         mainBoard.addTab("tab3", tabletab);
@@ -472,10 +531,12 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JTabbedPane mainBoard;
     private javax.swing.JPanel menuItem;
     private javax.swing.JPanel menuTab;
@@ -486,7 +547,6 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JTable staffTable;
     private javax.swing.JPanel stafftab;
     private javax.swing.JPanel tableItem;
-    private javax.swing.JLabel tableTable;
     private javax.swing.JPanel tabletab;
     private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables

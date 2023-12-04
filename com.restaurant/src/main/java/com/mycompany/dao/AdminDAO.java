@@ -42,7 +42,7 @@ public class AdminDAO {
         return admins;
     }
     public static Admin getByUsername(String username){
-        Admin admin = new Admin();
+        Admin admin = null;
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from admin where username = ?";
@@ -51,6 +51,7 @@ public class AdminDAO {
             preparedStatment.setString(1, username);
             ResultSet rs = preparedStatment.executeQuery();
             while (rs.next()) {
+                admin = new Admin();
                 admin.setId(rs.getInt("id"));
                 admin.setName(rs.getString("name"));
                 admin.setPhone(rs.getString("phone"));
@@ -59,12 +60,12 @@ public class AdminDAO {
                 System.out.println(admin.toString());
                 return admin;
             }
-            return null;
+            return admin;
                 
         } catch (SQLException e) {
             
             e.printStackTrace();
-            return null;
+            return admin;
         }
     }
     public static void createAdmin(Admin admin) {
