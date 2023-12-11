@@ -22,8 +22,10 @@ import java.util.List;
  * @author Admin
  */
 public class DishDAO {
-
-    public static List<Dish> getAllDishes() {
+    public DishDAO(){
+        super();
+    }
+    public static List<Dish> getAll() {
         List<Dish> dishs = new ArrayList<Dish>();
         try {
 
@@ -52,7 +54,7 @@ public class DishDAO {
         return dishs;
     }
 
-    public static void createDish(Dish dish) {
+    public static void create(Dish dish) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO dish (name, price, category ,image) VALUES (?, ?, ?, ?);";

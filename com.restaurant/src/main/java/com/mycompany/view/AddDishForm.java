@@ -357,7 +357,7 @@ public class AddDishForm extends javax.swing.JFrame {
             dish.setPrice(BigDecimal.valueOf(Double.valueOf(priceField.getText())));
             dish.setCategory(categoryField.getText());
             dish.setImage(imageBytes);
-            DishService.createDish(dish);
+            DishService.create(dish);
             this.setVisible(false);
             this.dashBoard.handleMenuTable();
         }

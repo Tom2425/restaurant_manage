@@ -13,12 +13,28 @@ import java.util.List;
  *
  * @author Admin
  */
-public class DishService {
-    public static List<Dish> getAllDishes() {
-        List<Dish> menu = DishDAO.getAllDishes();
+public class DishService extends Service{
+
+    public DishService() {
+         super();
+    }
+    
+    public static List<Dish> getAll() {
+        List<Dish> menu = DishDAO.getAll();
         return menu;
     }
-    public static void createDish(Dish dish){
-        DishDAO.createDish(dish);
+    public static void create(Dish dish){
+        DishDAO.create(dish);
     }
+
+    /**
+     *
+     */
+    public static void update(){
+        System.out.println("Dish update");
+    }
+    public static void delete(){
+        System.out.println("Dish delete");
+    }
+
 }

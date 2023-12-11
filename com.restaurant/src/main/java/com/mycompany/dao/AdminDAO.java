@@ -1,4 +1,4 @@
-/*
+     /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -18,9 +18,14 @@ import java.util.List;
  *
  * @author Admin
  */
-public class AdminDAO {
+public class AdminDAO  extends DAO{
 
-    public static List<Admin> getAllAdmins() {
+    public AdminDAO() {
+        super();
+    }
+
+    public static List<Admin> getAll(){
+        
         List<Admin> admins = new ArrayList<Admin>();
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
@@ -68,7 +73,7 @@ public class AdminDAO {
             return admin;
         }
     }
-    public static void createAdmin(Admin admin) {
+    public static void create(Admin admin) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO admin (name, username, password, role, phone) VALUES(?, ?, ?, ?, ?)";

@@ -12,17 +12,28 @@ import java.util.List;
  *
  * @author Admin
  */
-public class AdminService {
+public class AdminService extends Service{
+
+    public AdminService() {
+        super();
+    }
+    
     static public Admin login(String username, String password){
         Admin a = AdminDAO.login(username, password);
         return a;
     }
-    static public List<Admin> getAllAdmins(){
-        List<Admin> admins = AdminDAO.getAllAdmins();
+    static public List<Admin> getAll(){
+        List<Admin> admins = AdminDAO.getAll();
         return admins;
     }
-    static public void createAdmin(Admin admin){
-        AdminDAO.createAdmin(admin);
+    static public void create(Admin admin){
+        AdminDAO.create(admin);
+    }
+    static public void delete(int id){
+        System.out.println("Admin delete " + id);
+    }
+    static public void update(int id){
+        System.out.println("Admin update "+id);
     }
     static public Admin getByUsername(String username){
         Admin a = AdminDAO.getByUsername( username);
