@@ -4,6 +4,7 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.view.POSForm;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Dish;
 import com.mycompany.service.AdminService;
@@ -651,7 +652,9 @@ public class DashBoardForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tableItem1MouseClicked
 
     private void tableItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableItem2MouseClicked
-        // TODO add your handling code here:
+        new POSForm().setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
+        new POSForm().setLocationRelativeTo(null);
+        new POSForm().setVisible(true);
     }//GEN-LAST:event_tableItem2MouseClicked
 
     private void addTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTableBtnActionPerformed
