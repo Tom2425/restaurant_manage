@@ -357,7 +357,7 @@ public class AddStaffForm extends javax.swing.JFrame {
             admin.setPassword(String.valueOf(passwordField.getPassword()));
             admin.setPhone(phoneField.getText());
             admin.setRole(String.valueOf(roleField.getSelectedItem()));
-            AdminService.createAdmin(admin);
+            AdminService.create(admin);
             this.dispose();
             this.dashBoard.handlStaffTable();
         }

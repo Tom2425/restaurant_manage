@@ -11,6 +11,7 @@ import com.mycompany.service.AdminService;
 import com.mycompany.service.DishService;
 import com.mycompany.util.HandleImage;
 import com.mycompany.util.ImageRenderer;
+import com.mycompany.util.TableActionCellEditor;
 import com.mycompany.util.TableActionCellRender;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -64,11 +65,12 @@ public class DashBoardForm extends javax.swing.JFrame {
     }
 
     public void handleMenuTable() {
-        List<Dish> menu = DishService.getAllDishes();
+        List<Dish> menu = DishService.getAll();
         DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
         model.setRowCount(0);
         menuTable.getColumn("Image").setCellRenderer(new CellRenderer());
-        menuTable.getColumn("Action").setCellRenderer(new TableActionCellRender());
+        menuTable.getColumn("Action").setCellRenderer(new TableActionCellRender<DishService>(DishService.class));
+        menuTable.getColumn("Action").setCellEditor(new TableActionCellEditor<DishService>(DishService.class));
         String imagePath = "/image/image.png";
        
         for (Dish dish : menu) {
@@ -116,10 +118,11 @@ public class DashBoardForm extends javax.swing.JFrame {
  
     }
     public void handlStaffTable() {
-        List<Admin> admins = AdminService.getAllAdmins();
+        List<Admin> admins = AdminService.getAll();
         DefaultTableModel model = (DefaultTableModel) staffTable.getModel();
         model.setRowCount(0);
-        staffTable.getColumn("Action").setCellRenderer(new TableActionCellRender());
+        staffTable.getColumn("Action").setCellRenderer(new TableActionCellRender<AdminService>(AdminService.class));
+        staffTable.getColumn("Action").setCellEditor(new TableActionCellEditor<AdminService>(AdminService.class));
         for (Admin admin : admins) {
             model.addRow(new Object[]{String.valueOf(admins.indexOf(admin) + 1), admin.getName(), admin.getRole(), admin.getPhone()});
         }
@@ -249,7 +252,7 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, false, false
+                false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -258,8 +261,15 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(menuTable);
         if (menuTable.getColumnModel().getColumnCount() > 0) {
+            menuTable.getColumnModel().getColumn(0).setResizable(false);
+            menuTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            menuTable.getColumnModel().getColumn(1).setResizable(false);
+            menuTable.getColumnModel().getColumn(1).setPreferredWidth(130);
+            menuTable.getColumnModel().getColumn(2).setResizable(false);
+            menuTable.getColumnModel().getColumn(3).setResizable(false);
             menuTable.getColumnModel().getColumn(4).setResizable(false);
             menuTable.getColumnModel().getColumn(5).setResizable(false);
+            menuTable.getColumnModel().getColumn(5).setPreferredWidth(62);
         }
 
         addDishBtn.setText("Add");
@@ -280,7 +290,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         menuTab.setLayout(menuTabLayout);
         menuTabLayout.setHorizontalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(jScrollPane2)
             .addGroup(menuTabLayout.createSequentialGroup()
                 .addComponent(addDishBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -294,7 +304,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                     .addComponent(removeDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(jScrollPane2))
         );
 
         mainBoard.addTab("tab1", menuTab);
@@ -311,7 +321,7 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, false
+                false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -320,6 +330,10 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
         staffTable.setRowHeight(40);
         jScrollPane1.setViewportView(staffTable);
+        if (staffTable.getColumnModel().getColumnCount() > 0) {
+            staffTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            staffTable.getColumnModel().getColumn(4).setPreferredWidth(62);
+        }
 
         addStaffBtn.setText("Add");
         addStaffBtn.addActionListener(new java.awt.event.ActionListener() {

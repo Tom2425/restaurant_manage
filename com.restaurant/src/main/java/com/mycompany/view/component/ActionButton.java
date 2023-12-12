@@ -4,7 +4,9 @@
  */
 package com.mycompany.view.component;
 
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -12,6 +14,7 @@ import javax.swing.border.EmptyBorder;
  * @author Admin
  */
 public class ActionButton extends JButton {
+    
       public ActionButton(){
           setContentAreaFilled(false);
           setBorder(new EmptyBorder(3,3,3,3));

@@ -6,23 +6,30 @@ package com.mycompany.util;
 
 import com.mycompany.view.component.ActionPanel;
 import java.awt.Component;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.JTextField;
 
 /**
  *
  * @author Admin
  */
-public class TableActionCellRender<T> extends DefaultTableCellRenderer{
+public class TableActionCellEditor<T> extends DefaultCellEditor {
     private Class<T> clazz;
 
-    public TableActionCellRender(Class<T> clazz) {
+    /**
+     *
+     * @param clazz
+     */
+    public TableActionCellEditor(Class<T> clazz) {
+        super(new JCheckBox());
         this.clazz = clazz;
+     
     }
-    
+
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component con =  super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         ActionPanel panel = new ActionPanel(clazz);
         return panel;
     }
