@@ -4,11 +4,24 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.model.Dish;
+import com.mycompany.util.*;
 import com.mycompany.service.DishService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import com.mycompany.view.DashBoardForm;
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -16,6 +29,7 @@ import com.mycompany.view.DashBoardForm;
  */
 public class POSForm extends javax.swing.JFrame {
     private DashBoardForm dashBoard;
+    private DishService dishService;
     /**
      * Creates new form POSForm
      */
@@ -24,11 +38,62 @@ public class POSForm extends javax.swing.JFrame {
     }
     
     public POSForm(DashBoardForm dashBoard){
-
         setTitle("POS");
         this.dashBoard = dashBoard;
         initComponents();
+        productHandleTable();
         
+    }
+    public void productHandleTable() {
+    List<Dish> proMenu = DishService.getAll();
+    DefaultTableModel proModel = (DefaultTableModel) prodctTable.getModel();
+    proModel.setRowCount(0);
+    String imagePath = "/image/image.png";
+
+    for (Dish dish : proMenu) {
+        JLabel imageLabel = new JLabel();   
+        BufferedImage originalImage = null;
+        if(dish.getImage() == null){
+            URL url = getClass().getResource(imagePath);
+            File file = new File(url.getPath());
+                
+            try {
+                originalImage = ImageIO.read(file);
+            } catch (IOException ex) {
+                Logger.getLogger(POSForm.class.getName()).log(Level.SEVERE, null, ex);
+                // Handle the exception (display a message, log, etc.)
+                }
+            }
+        else{
+                   originalImage = dish.getImageAsBufferedImage();
+            }
+            Image scaledImage = HandleImage.getScaledImage(originalImage, 120, 120);
+            ImageIcon icon = new ImageIcon(scaledImage);
+            imageLabel.setIcon(icon);
+
+        // Add the image icon to the table model
+            proModel.addRow(new Object[]{icon});
+        }
+
+    // Set up the cell renderer
+        prodctTable.getColumnModel().getColumn(0).setCellRenderer(new CellRenderer());
+        prodctTable.setRowHeight(120);
+    }
+
+    class CellRenderer implements TableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                Object value,
+                boolean isSelected,
+                boolean hasFocus,
+                int row,
+                int column) {
+            JLabel label = new JLabel();
+            label.setIcon((Icon) value);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setVerticalAlignment(JLabel.CENTER);
+            return label;
+        }
     }
 
     /**
@@ -55,6 +120,7 @@ public class POSForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         newBtnPOS = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
@@ -99,6 +165,13 @@ public class POSForm extends javax.swing.JFrame {
 
         newBtnPOS.setText("New");
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/off.png"))); // NOI18N
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -108,14 +181,21 @@ public class POSForm extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(newBtnPOS)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(30, 30, 30))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(newBtnPOS, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(newBtnPOS, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -304,6 +384,11 @@ public class POSForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        new POSForm().setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
+        System.exit(0);
+    }//GEN-LAST:event_jLabel2MouseClicked
     
     /**
      * @param args the command line arguments
@@ -335,6 +420,7 @@ public class POSForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
                 new POSForm().setVisible(true);
             }
         });
@@ -342,6 +428,7 @@ public class POSForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
