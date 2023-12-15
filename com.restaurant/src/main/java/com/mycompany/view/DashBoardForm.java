@@ -4,6 +4,7 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.view.POSForm;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Dish;
 import com.mycompany.service.AdminService;
@@ -77,7 +78,8 @@ public class DashBoardForm extends javax.swing.JFrame {
         for (Dish dish : menu) {
             JLabel imageLabel = new JLabel();
             BufferedImage originalImage = null;
-            if (dish.getImage() == null) {
+
+            if(dish.getImage() == null){
                 URL url = getClass().getResource(imagePath);
                 File file = new File(url.getPath());
 
@@ -119,7 +121,10 @@ public class DashBoardForm extends javax.swing.JFrame {
 
     }
 
-    public void handlStaffTable() {
+    /**
+     *
+     */
+    public void handlStaffTable(){
         List<Admin> admins = AdminService.getAll();
         DefaultTableModel model = (DefaultTableModel) staffTable.getModel();
         model.setRowCount(0);
@@ -758,7 +763,10 @@ public class DashBoardForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tableItem1MouseClicked
 
     private void tableItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableItem2MouseClicked
-        // TODO add your handling code here:
+        POSForm posForm = new POSForm(this);
+        posForm.setLocationRelativeTo(null);
+        posForm.setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
+        posForm.setVisible(true);
     }//GEN-LAST:event_tableItem2MouseClicked
 
     private void addTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTableBtnActionPerformed
