@@ -22,7 +22,7 @@ public class Bill {
         this.list = new HashMap<>();
     }
 
-    public Map<Dish, Integer> getDishList() {
+    public Map<Dish, Integer> getList() {
         return list;
     }
 
