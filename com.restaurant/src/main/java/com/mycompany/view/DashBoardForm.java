@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -50,7 +51,9 @@ public class DashBoardForm extends javax.swing.JFrame {
         this.admin = admin;
 
         initComponents();
+        handleRole();
         costomComponents();
+       
 
 //        JPanel grid = new JPanel();
 //        GridLayout lo = new GridLayout(0, 10);
@@ -68,36 +71,35 @@ public class DashBoardForm extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
         model.setRowCount(0);
         menuTable.getColumn("Image").setCellRenderer(new CellRenderer());
-        menuTable.getColumn("Action").setCellRenderer(new TableActionCellRender<DishService>(DishService.class));
-        menuTable.getColumn("Action").setCellEditor(new TableActionCellEditor<DishService>(DishService.class));
+
         String imagePath = "/image/image.png";
-       
+
         for (Dish dish : menu) {
-              JLabel imageLabel = new JLabel();   
-             BufferedImage originalImage = null;
-            if(dish.getImage() == null){
-                 URL url = getClass().getResource(imagePath);
+            JLabel imageLabel = new JLabel();
+            BufferedImage originalImage = null;
+            if (dish.getImage() == null) {
+                URL url = getClass().getResource(imagePath);
                 File file = new File(url.getPath());
-                
-                 try {
-                     originalImage = ImageIO.read(file);
-                 } catch (IOException ex) {
-                     Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
-                 }
-               
+
+                try {
+                    originalImage = ImageIO.read(file);
+                } catch (IOException ex) {
+                    Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                originalImage = dish.getImageAsBufferedImage();
             }
-            else{
-                   originalImage = dish.getImageAsBufferedImage();
-            }
-            Image scaledImage = HandleImage.getScaledImage(originalImage, 50, 50);
+            Image scaledImage = HandleImage.getScaledImage(originalImage, 100, 50);
             ImageIcon icon = new ImageIcon(scaledImage);
             imageLabel.setIcon(icon);
-            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getName(), String.valueOf(dish.getPrice()), dish.getCategory(),imageLabel});
+            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getId(), dish.getName(), String.valueOf(dish.getPrice()), dish.getCategory(), imageLabel});
         }
-       
+
     }
+
     class CellRenderer implements TableCellRenderer {
- 
+
         @Override
         public Component getTableCellRendererComponent(JTable table,
                 Object value,
@@ -105,28 +107,38 @@ public class DashBoardForm extends javax.swing.JFrame {
                 boolean hasFocus,
                 int row,
                 int column) {
- 
+
             TableColumn tb = menuTable.getColumn("Image");
-            tb.setMaxWidth(50);
+            tb.setMaxWidth(100);
             tb.setMinWidth(50);
- 
+
             menuTable.setRowHeight(60);
- 
+
             return (Component) value;
         }
- 
+
     }
+
     public void handlStaffTable() {
         List<Admin> admins = AdminService.getAll();
         DefaultTableModel model = (DefaultTableModel) staffTable.getModel();
         model.setRowCount(0);
-        staffTable.getColumn("Action").setCellRenderer(new TableActionCellRender<AdminService>(AdminService.class));
-        staffTable.getColumn("Action").setCellEditor(new TableActionCellEditor<AdminService>(AdminService.class));
+
         for (Admin admin : admins) {
-            model.addRow(new Object[]{String.valueOf(admins.indexOf(admin) + 1), admin.getName(), admin.getRole(), admin.getPhone()});
+            model.addRow(new Object[]{String.valueOf(admins.indexOf(admin) + 1), admin.getId(), admin.getName(), admin.getRole(), admin.getPhone()});
         }
     }
-
+    public void handleRole(){
+        if(this.admin.getRole().equals("staff")){
+            addDishBtn.setEnabled(false);
+            updateDishBtn.setEnabled(false);
+            removeDishBtn.setEnabled(false);
+            
+            addStaffBtn.setEnabled(false);
+            updateStaffBtn.setEnabled(false);
+            removeStaffBtn.setEnabled(false);
+        }
+    }
     public void costomComponents() {
         adminNameLabel.setText(adminNameLabel.getText() + admin.getName());
         adminRoleLabel.setText(adminRoleLabel.getText() + admin.getRole());
@@ -156,23 +168,31 @@ public class DashBoardForm extends javax.swing.JFrame {
         menuTab = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         menuTable = new javax.swing.JTable();
+        jPanel6 = new javax.swing.JPanel();
         addDishBtn = new javax.swing.JButton();
         removeDishBtn = new javax.swing.JButton();
+        updateDishBtn = new javax.swing.JButton();
         stafftab = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         staffTable = new javax.swing.JTable();
+        jPanel11 = new javax.swing.JPanel();
         addStaffBtn = new javax.swing.JButton();
         removeStaffBtn = new javax.swing.JButton();
+        updateStaffBtn = new javax.swing.JButton();
         tabletab = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         staffTable1 = new javax.swing.JTable();
+        jPanel10 = new javax.swing.JPanel();
         addTableBtn = new javax.swing.JButton();
-        removeTable = new javax.swing.JButton();
+        removeTableBtn = new javax.swing.JButton();
+        updateTableBtn = new javax.swing.JButton();
         kitchentab = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         staffTable2 = new javax.swing.JTable();
-        addStaffBtn2 = new javax.swing.JButton();
+        jPanel8 = new javax.swing.JPanel();
+        addBuild = new javax.swing.JButton();
         removeStaffBtn2 = new javax.swing.JButton();
+        update = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -247,11 +267,11 @@ public class DashBoardForm extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "SR", "Name", "Price", "Category", "Image", "Action"
+                "SR", "ID", "Name", "Price", "Category", "Image"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -260,16 +280,20 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(menuTable);
         if (menuTable.getColumnModel().getColumnCount() > 0) {
-            menuTable.getColumnModel().getColumn(0).setResizable(false);
+            menuTable.getColumnModel().getColumn(0).setMinWidth(40);
             menuTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-            menuTable.getColumnModel().getColumn(1).setResizable(false);
-            menuTable.getColumnModel().getColumn(1).setPreferredWidth(130);
+            menuTable.getColumnModel().getColumn(0).setMaxWidth(40);
+            menuTable.getColumnModel().getColumn(1).setMinWidth(40);
+            menuTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+            menuTable.getColumnModel().getColumn(1).setMaxWidth(40);
             menuTable.getColumnModel().getColumn(2).setResizable(false);
+            menuTable.getColumnModel().getColumn(2).setPreferredWidth(130);
             menuTable.getColumnModel().getColumn(3).setResizable(false);
             menuTable.getColumnModel().getColumn(4).setResizable(false);
             menuTable.getColumnModel().getColumn(5).setResizable(false);
-            menuTable.getColumnModel().getColumn(5).setPreferredWidth(62);
         }
+
+        jPanel6.setLayout(new java.awt.GridLayout(1, 0));
 
         addDishBtn.setText("Add");
         addDishBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -277,6 +301,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                 addDishBtnActionPerformed(evt);
             }
         });
+        jPanel6.add(addDishBtn);
 
         removeDishBtn.setText("Remove");
         removeDishBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -284,26 +309,32 @@ public class DashBoardForm extends javax.swing.JFrame {
                 removeDishBtnActionPerformed(evt);
             }
         });
+        jPanel6.add(removeDishBtn);
+
+        updateDishBtn.setText("Update");
+        updateDishBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateDishBtnActionPerformed(evt);
+            }
+        });
+        jPanel6.add(updateDishBtn);
 
         javax.swing.GroupLayout menuTabLayout = new javax.swing.GroupLayout(menuTab);
         menuTab.setLayout(menuTabLayout);
         menuTabLayout.setHorizontalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(menuTabLayout.createSequentialGroup()
-                .addComponent(addDishBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeDishBtn)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         menuTabLayout.setVerticalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(menuTabLayout.createSequentialGroup()
-                .addGroup(menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(removeDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2))
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         mainBoard.addTab("tab1", menuTab);
@@ -316,11 +347,11 @@ public class DashBoardForm extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "SR", "Name", "Status", "Phone", "Action"
+                "SR", "ID", "Name", "Status", "Phone"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -330,9 +361,18 @@ public class DashBoardForm extends javax.swing.JFrame {
         staffTable.setRowHeight(40);
         jScrollPane1.setViewportView(staffTable);
         if (staffTable.getColumnModel().getColumnCount() > 0) {
+            staffTable.getColumnModel().getColumn(0).setMinWidth(40);
             staffTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-            staffTable.getColumnModel().getColumn(4).setPreferredWidth(62);
+            staffTable.getColumnModel().getColumn(0).setMaxWidth(40);
+            staffTable.getColumnModel().getColumn(1).setMinWidth(40);
+            staffTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+            staffTable.getColumnModel().getColumn(1).setMaxWidth(40);
+            staffTable.getColumnModel().getColumn(2).setResizable(false);
+            staffTable.getColumnModel().getColumn(3).setResizable(false);
+            staffTable.getColumnModel().getColumn(4).setResizable(false);
         }
+
+        jPanel11.setLayout(new java.awt.GridLayout(1, 0));
 
         addStaffBtn.setText("Add");
         addStaffBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -340,6 +380,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                 addStaffBtnActionPerformed(evt);
             }
         });
+        jPanel11.add(addStaffBtn);
 
         removeStaffBtn.setText("Remove");
         removeStaffBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -347,42 +388,64 @@ public class DashBoardForm extends javax.swing.JFrame {
                 removeStaffBtnActionPerformed(evt);
             }
         });
+        jPanel11.add(removeStaffBtn);
+
+        updateStaffBtn.setText("Update");
+        updateStaffBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateStaffBtnActionPerformed(evt);
+            }
+        });
+        jPanel11.add(updateStaffBtn);
 
         javax.swing.GroupLayout stafftabLayout = new javax.swing.GroupLayout(stafftab);
         stafftab.setLayout(stafftabLayout);
         stafftabLayout.setHorizontalGroup(
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
             .addGroup(stafftabLayout.createSequentialGroup()
-                .addComponent(addStaffBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeStaffBtn)
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         stafftabLayout.setVerticalGroup(
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, stafftabLayout.createSequentialGroup()
-                .addGroup(stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(removeStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainBoard.addTab("tab2", stafftab);
 
         staffTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "SR", "Name", "Status", "Phone"
+                "SR", "ID", "Name"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane4.setViewportView(staffTable1);
+        if (staffTable1.getColumnModel().getColumnCount() > 0) {
+            staffTable1.getColumnModel().getColumn(0).setResizable(false);
+            staffTable1.getColumnModel().getColumn(0).setPreferredWidth(40);
+            staffTable1.getColumnModel().getColumn(1).setResizable(false);
+            staffTable1.getColumnModel().getColumn(1).setPreferredWidth(40);
+            staffTable1.getColumnModel().getColumn(2).setResizable(false);
+        }
+
+        jPanel10.setLayout(new java.awt.GridLayout(1, 0));
 
         addTableBtn.setText("Add");
         addTableBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -390,13 +453,23 @@ public class DashBoardForm extends javax.swing.JFrame {
                 addTableBtnActionPerformed(evt);
             }
         });
+        jPanel10.add(addTableBtn);
 
-        removeTable.setText("Remove");
-        removeTable.addActionListener(new java.awt.event.ActionListener() {
+        removeTableBtn.setText("Remove");
+        removeTableBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeTableActionPerformed(evt);
+                removeTableBtnActionPerformed(evt);
             }
         });
+        jPanel10.add(removeTableBtn);
+
+        updateTableBtn.setText("Update");
+        updateTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateTableBtnActionPerformed(evt);
+            }
+        });
+        jPanel10.add(updateTableBtn);
 
         javax.swing.GroupLayout tabletabLayout = new javax.swing.GroupLayout(tabletab);
         tabletab.setLayout(tabletabLayout);
@@ -404,19 +477,15 @@ public class DashBoardForm extends javax.swing.JFrame {
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(tabletabLayout.createSequentialGroup()
-                .addComponent(addTableBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeTable)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         tabletabLayout.setVerticalGroup(
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabletabLayout.createSequentialGroup()
-                .addGroup(tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(removeTable, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addTableBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainBoard.addTab("tab2", tabletab);
@@ -434,12 +503,15 @@ public class DashBoardForm extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(staffTable2);
 
-        addStaffBtn2.setText("Add");
-        addStaffBtn2.addActionListener(new java.awt.event.ActionListener() {
+        jPanel8.setLayout(new java.awt.GridLayout(1, 0));
+
+        addBuild.setText("Add");
+        addBuild.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addStaffBtn2ActionPerformed(evt);
+                addBuildActionPerformed(evt);
             }
         });
+        jPanel8.add(addBuild);
 
         removeStaffBtn2.setText("Remove");
         removeStaffBtn2.addActionListener(new java.awt.event.ActionListener() {
@@ -447,6 +519,15 @@ public class DashBoardForm extends javax.swing.JFrame {
                 removeStaffBtn2ActionPerformed(evt);
             }
         });
+        jPanel8.add(removeStaffBtn2);
+
+        update.setText("Update");
+        update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateActionPerformed(evt);
+            }
+        });
+        jPanel8.add(update);
 
         javax.swing.GroupLayout kitchentabLayout = new javax.swing.GroupLayout(kitchentab);
         kitchentab.setLayout(kitchentabLayout);
@@ -454,19 +535,16 @@ public class DashBoardForm extends javax.swing.JFrame {
             kitchentabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(kitchentabLayout.createSequentialGroup()
-                .addComponent(addStaffBtn2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeStaffBtn2)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         kitchentabLayout.setVerticalGroup(
             kitchentabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kitchentabLayout.createSequentialGroup()
-                .addGroup(kitchentabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(removeStaffBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addStaffBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainBoard.addTab("tab2", kitchentab);
@@ -482,9 +560,9 @@ public class DashBoardForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(mainBoard, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(181, Short.MAX_VALUE))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
 
         jPanel9.add(jPanel2, java.awt.BorderLayout.EAST);
@@ -644,20 +722,35 @@ public class DashBoardForm extends javax.swing.JFrame {
         AddStaffForm addStaffForm = new AddStaffForm(this);
         addStaffForm.setLocationRelativeTo(null);
         addStaffForm.setVisible(true);
+        addStaffForm.setDefaultCloseOperation(addStaffForm.HIDE_ON_CLOSE);
     }//GEN-LAST:event_addStaffBtnActionPerformed
 
     private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
         AddDishForm addDishForm = new AddDishForm(this);
         addDishForm.setLocationRelativeTo(null);
         addDishForm.setVisible(true);
+        addDishForm.setDefaultCloseOperation(addDishForm.HIDE_ON_CLOSE);
     }//GEN-LAST:event_addDishBtnActionPerformed
 
     private void removeDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDishBtnActionPerformed
-        // TODO add your handling code here:
+        if (menuTable.getSelectedRowCount() == 1) {
+            String id = String.valueOf(menuTable.getValueAt(menuTable.getSelectedRow(), 1));
+            DishService.delete(Integer.valueOf(id));
+            handleMenuTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_removeDishBtnActionPerformed
 
     private void removeStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeStaffBtnActionPerformed
-        // TODO add your handling code here:
+        if (staffTable.getSelectedRowCount() == 1) {
+      
+            String id = String.valueOf(staffTable.getValueAt(staffTable.getSelectedRow(), 1));
+            AdminService.delete(Integer.valueOf(id));
+            handlStaffTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_removeStaffBtnActionPerformed
 
     private void tableItem1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableItem1MouseClicked
@@ -672,25 +765,67 @@ public class DashBoardForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_addTableBtnActionPerformed
 
-    private void removeTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTableActionPerformed
+    private void removeTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTableBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_removeTableActionPerformed
-
-    private void addStaffBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStaffBtn2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addStaffBtn2ActionPerformed
+    }//GEN-LAST:event_removeTableBtnActionPerformed
 
     private void removeStaffBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeStaffBtn2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_removeStaffBtn2ActionPerformed
 
+    private void addBuildActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBuildActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addBuildActionPerformed
+
+    private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updateActionPerformed
+
+    private void updateTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateTableBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updateTableBtnActionPerformed
+
+    private void updateStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStaffBtnActionPerformed
+        if (staffTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(staffTable.getValueAt(staffTable.getSelectedRow(), 1).toString());
+            System.out.println("Id of admin update " + String.valueOf(id));
+            Admin admin = AdminService.getById(id);
+            System.out.println("Get first: " + admin.toString());
+            UpdateStaffForm f = new UpdateStaffForm(this, admin);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+    }//GEN-LAST:event_updateStaffBtnActionPerformed
+
+    private void updateDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateDishBtnActionPerformed
+        if (menuTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(menuTable.getValueAt(menuTable.getSelectedRow(), 1).toString());
+            Dish dish = DishService.getById(id);
+            UpdateDishForm f = new UpdateDishForm(this, dish);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+    }//GEN-LAST:event_updateDishBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addBuild;
     private javax.swing.JButton addDishBtn;
     private javax.swing.JButton addStaffBtn;
-    private javax.swing.JButton addStaffBtn2;
     private javax.swing.JButton addTableBtn;
     private javax.swing.JLabel adminNameLabel;
     private javax.swing.JLabel adminRoleLabel;
@@ -705,12 +840,16 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -724,7 +863,7 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JButton removeDishBtn;
     private javax.swing.JButton removeStaffBtn;
     private javax.swing.JButton removeStaffBtn2;
-    private javax.swing.JButton removeTable;
+    private javax.swing.JButton removeTableBtn;
     private javax.swing.JPanel staffItem;
     private javax.swing.JTable staffTable;
     private javax.swing.JTable staffTable1;
@@ -735,5 +874,9 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JPanel tableItem2;
     private javax.swing.JPanel tabletab;
     private javax.swing.JLabel title;
+    private javax.swing.JButton update;
+    private javax.swing.JButton updateDishBtn;
+    private javax.swing.JButton updateStaffBtn;
+    private javax.swing.JButton updateTableBtn;
     // End of variables declaration//GEN-END:variables
 }

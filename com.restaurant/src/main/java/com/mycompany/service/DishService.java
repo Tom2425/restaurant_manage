@@ -6,7 +6,6 @@ package com.mycompany.service;
 
 import com.mycompany.dao.DishDAO;
 import com.mycompany.model.Dish;
-import com.mycompany.model.User;
 import java.util.List;
 
 /**
@@ -30,11 +29,16 @@ public class DishService extends Service{
     /**
      *
      */
-    public static void update(){
-        System.out.println("Dish update");
+    public static void update(Dish dish){
+        DishDAO.update(dish);
     }
-    public static void delete(){
-        System.out.println("Dish delete");
+ 
+    static public void delete(int id){
+        DishDAO.delete(id);
+       
     }
-
+    static public Dish getById(int id){
+        Dish dish = DishDAO.getById(id);
+        return dish;
+    }
 }

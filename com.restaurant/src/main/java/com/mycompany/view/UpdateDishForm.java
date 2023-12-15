@@ -29,19 +29,22 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  * @author Admin
  */
-public class AddDishForm extends javax.swing.JFrame {
+public class UpdateDishForm extends javax.swing.JFrame {
     private DashBoardForm dashBoard;
+    private Dish dish;
     /**
      * Creates new form AddDish
      */
-    public AddDishForm() {
+    public UpdateDishForm() {
          initComponents();
-         customeConponent();
+         customComponent();
     }
-    public AddDishForm(DashBoardForm dashBoard){
+
+    public UpdateDishForm(DashBoardForm dashBoard,Dish dish){
         this.dashBoard = dashBoard;
+         this.dish = dish;
         initComponents();
-        customeConponent();
+        customComponent();
         
     }
 
@@ -109,8 +112,19 @@ public class AddDishForm extends javax.swing.JFrame {
         }
     }
  
-    private void customeConponent(){
-       loadImage("/image/image.png", false);
+    private void customComponent(){
+//       loadImage("/image/image.png", false);
+         if(this.dish.getImage() != null){
+                BufferedImage originalImage = this.dish.getImageAsBufferedImage();
+                Image scaledImage = HandleImage.getScaledImage(originalImage, 100, 100);
+                ImageIcon icon = new ImageIcon(scaledImage);
+                imageLabel.setIcon(icon);
+         }
+       
+        
+        nameField.setText(this.dish.getName());
+        categoryField.setText(this.dish.getCategory());
+        priceField.setText(String.valueOf(this.dish.getPrice()));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -178,7 +192,7 @@ public class AddDishForm extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(370, 50));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Add dish");
+        jLabel1.setText("Update Dish");
         jPanel1.add(jLabel1);
 
         jPanel4.add(jPanel1);
@@ -239,7 +253,7 @@ public class AddDishForm extends javax.swing.JFrame {
 
         jPanel10.add(jPanel2);
 
-        jPanel11.setPreferredSize(new java.awt.Dimension(120, 153));
+        jPanel11.setPreferredSize(new java.awt.Dimension(120, 120));
 
         jButton1.setText("Upload ");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -253,16 +267,16 @@ public class AddDishForm extends javax.swing.JFrame {
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(47, Short.MAX_VALUE)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(48, 48, 48))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1))
         );
@@ -280,7 +294,7 @@ public class AddDishForm extends javax.swing.JFrame {
             }
         });
 
-        addDishBtn.setText("Add");
+        addDishBtn.setText("Update");
         addDishBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addDishBtnActionPerformed(evt);
@@ -292,20 +306,19 @@ public class AddDishForm extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(130, 130, 130)
+                .addGap(132, 132, 132)
                 .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70)
+                .addGap(67, 67, 67)
                 .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(197, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelBtn)
                     .addComponent(addDishBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jPanel4.add(jPanel3);
@@ -315,16 +328,16 @@ public class AddDishForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -348,20 +361,27 @@ public class AddDishForm extends javax.swing.JFrame {
 
     private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
         Dish dish = new Dish();
-        File imageFile = new File(imagePath);
-        try {
-            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+       
+        try { 
+          
+            if(imagePath != null){
+                File imageFile = new File(imagePath);
+                byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+                 dish.setImage(imageBytes);
+            }
+            
             if ( validateNameField() && validatePriceField() && validateCategoryField()) {
+            dish.setId(this.dish.getId());
             dish.setName(nameField.getText());
             dish.setPrice(BigDecimal.valueOf(Double.valueOf(priceField.getText())));
             dish.setCategory(categoryField.getText());
-            dish.setImage(imageBytes);
-            DishService.create(dish);
+           
+            DishService.update(dish);
             this.setVisible(false);
             this.dashBoard.handleMenuTable();
         }
         } catch (IOException ex) {
-            Logger.getLogger(AddDishForm.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UpdateDishForm.class.getName()).log(Level.SEVERE, null, ex);
         }
       
 
@@ -400,21 +420,23 @@ public class AddDishForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateDishForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AddDishForm().setVisible(true);
+                new UpdateDishForm().setVisible(true);
             }
         });
     }

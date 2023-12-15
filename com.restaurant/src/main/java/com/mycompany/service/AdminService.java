@@ -30,13 +30,17 @@ public class AdminService extends Service{
         AdminDAO.create(admin);
     }
     static public void delete(int id){
-        System.out.println("Admin delete " + id);
+        AdminDAO.delete(id);
     }
-    static public void update(int id){
-        System.out.println("Admin update "+id);
+    static public void update(Admin admin){
+        AdminDAO.update(admin);
     }
     static public Admin getByUsername(String username){
         Admin a = AdminDAO.getByUsername( username);
+        return a;
+    }
+    static public Admin getById(int id){
+        Admin a = AdminDAO.getById(id);
         return a;
     }
 }

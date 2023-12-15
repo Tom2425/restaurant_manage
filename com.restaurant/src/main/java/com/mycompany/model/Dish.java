@@ -31,6 +31,11 @@ public class Dish {
 
     public Dish() {
     }
+
+    public Dish(String name, double price) {
+        this.name = name;
+        this.price = BigDecimal.valueOf(price);
+    }
     public Image getImageAsImage() {
         try {
             if (image != null && image.length > 0) {
