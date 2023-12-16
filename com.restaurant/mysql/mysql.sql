@@ -35,4 +35,60 @@ INSERT INTO dish (name, price, category) VALUES ('Caesar Salad', 8.99, 'Salad');
 INSERT INTO dish (name, price, category) VALUES ('Coffee', 2.99, 'Beverage');
 INSERT INTO dish (name, price, category) VALUES ('Iced Tea', 1.99, 'Beverage');
 INSERT INTO dish (name, price, category) VALUES ('Orange Juice', 3.49, 'Beverage');
+select * from dish;
+select * from admin;
+create table dish(
+	id int not null auto_increment primary key,
+	name varchar(20) not null,
+    price DECIMAL(10, 2) not null,
+    category varchar(20),
+    image mediumblob
+);
+create table bill(
+	id int not null auto_increment primary key,
+	date datetime,
+    price DECIMAL(10, 2) not null
+);
+create table billDish(
+	billId int not null,
+    dishId int not null,
+    quantity int not null,
+    foreign key(billId) references bill(id),
+    foreign key(dishId) references dish(id)
+)
+-- Insert records into the dish table
+INSERT INTO dish (name, price, category) VALUES
+('Pasta', 12.99, 'Main Course'),
+('Salad', 7.99, 'Appetizer'),
+('Chocolate Cake', 9.99, 'Dessert');
 
+-- Insert records into the bill table
+INSERT INTO bill (date, price) VALUES
+('2023-12-15 12:30:00', 30.97),
+('2023-12-16 13:45:00', 25.50);
+
+-- Get the auto-generated IDs of the inserted bills
+SET @billId1 = LAST_INSERT_ID();
+SET @billId2 = LAST_INSERT_ID() + 1;
+select * from dish;
+-- Insert records into the billDish table for the first bill
+INSERT INTO billDish (billId, dishId, quantity) VALUES
+(5, 8, 2),  -- 2 servings of Pasta
+(3, 9, 1),  -- 1 serving of Salad
+(2, 10, 3);  -- 3 servings of Chocolate Cake;
+
+-- Insert records into the billDish table for the second bill
+INSERT INTO billDish (billId, dishId, quantity) VALUES
+(7, 6, 6),  -- 2 servings of Salad
+(7, 8, 8);  -- 1 serving of Chocolate Cake;
+select * from bill where date(time) = "2023-12-06";
+select * from bill, dish,billdish where bill.id = billdish.billid and dish.id = billdish.dishid ;
+INSERT INTO bill (time, price) VALUES
+('2023-1-5 12:30:00', 12.32),
+('2023-2-7 13:45:00', 25.50),
+('2023-12-5 12:30:00', 12.32),
+('2023-12-7 13:45:00', 25.50);
+
+INSERT INTO bill (time, price) VALUES
+('2023-12-16 12:30:00', 20.12);
+SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id

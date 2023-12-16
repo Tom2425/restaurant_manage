@@ -8,14 +8,21 @@ import com.mycompany.dao.JDBCConnection;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
+import com.mycompany.service.BillService;
+import com.mycompany.util.DateUtil;
 import com.mycompany.view.AddDishForm;
 import com.mycompany.view.AddStaffForm;
+import com.mycompany.view.BillForm;
 import com.mycompany.view.DashBoardForm;
 import com.mycompany.view.LoginForm;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 /**
  *
@@ -27,7 +34,9 @@ public class MainBoard {
         LoginForm loginForm = new LoginForm();
         loginForm.setLocationRelativeTo(null);
         loginForm.setVisible(true);
-
+//        BillForm loginForm = new BillForm();
+//        loginForm.setLocationRelativeTo(null);
+//        loginForm.setVisible(true);
       
     }
 }
