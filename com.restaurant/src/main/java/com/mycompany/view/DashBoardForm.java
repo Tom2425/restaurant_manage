@@ -8,9 +8,11 @@ import com.mycompany.view.POSForm;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
+import com.mycompany.model.Table;
 import com.mycompany.service.AdminService;
 import com.mycompany.service.BillService;
 import com.mycompany.service.DishService;
+import com.mycompany.service.TableService;
 import com.mycompany.util.DateUtil;
 import com.mycompany.util.HandleImage;
 import com.mycompany.util.ImageRenderer;
@@ -142,18 +144,24 @@ public class DashBoardForm extends javax.swing.JFrame {
         staffTable.setDefaultRenderer(Object.class, new CenterTextRenderer());
     }
 
-    public void handlTableTable() {
+    public void handleTableTable() {
+        List<Table> tables = TableService.getAll();
+        DefaultTableModel model = (DefaultTableModel) tableTable.getModel();
+        model.setRowCount(0);
 
+        for (Table table : tables) {
+            model.addRow(new Object[]{String.valueOf(tables.indexOf(table) + 1), table.getId(), table.getName()});
+        }
+        tableTable.setDefaultRenderer(Object.class, new CenterTextRenderer());
     }
 
     public void handleBillTable() {
         String choseDate = dateRegularOption.getSelectedItem().toString();
         List<Bill> list = null;
-        if(billTimestamp.getPrevousNumber() == 0){
+        if (billTimestamp.getPrevousNumber() == 0) {
             currentBtn.setEnabled(false);
             nextBtn.setEnabled(false);
-        }
-        else{
+        } else {
             currentBtn.setEnabled(true);
             nextBtn.setEnabled(true);
         }
@@ -166,7 +174,7 @@ public class DashBoardForm extends javax.swing.JFrame {
             dateLabel.setText(date[0].toString() + " to " + date[1].toString());
             list = BillService.getWithDate(date[0], date[1]);
 
-        } else if (choseDate.equals("Montly")) {
+        } else if (choseDate.equals("Monthly")) {
             LocalDate[] date = billTimestamp.getMonthlyDate();
             dateLabel.setText(date[0].toString() + " to " + date[1].toString());
             list = BillService.getWithDate(date[0], date[1]);
@@ -176,15 +184,14 @@ public class DashBoardForm extends javax.swing.JFrame {
             dateLabel.setText(date[0].toString() + " to " + date[1].toString());
             list = BillService.getWithDate(date[0], date[1]);
 
-        }
-        else if(choseDate.equals("All Time")){
+        } else if (choseDate.equals("All Time")) {
             list = BillService.getAll();
             dateLabel.setText("");
             currentBtn.setEnabled(false);
             nextBtn.setEnabled(false);
             previousBtn.setEnabled(false);
         }
-        if(list == null){
+        if (list == null) {
             return;
         }
         DefaultTableModel model = (DefaultTableModel) billTable.getModel();
@@ -218,6 +225,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         adminRoleLabel.setText(adminRoleLabel.getText() + admin.getRole());
         handlStaffTable();
         handleMenuTable();
+        handleTableTable();
         handleBillTable();
     }
 
@@ -268,7 +276,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         updateStaffBtn = new javax.swing.JButton();
         tabletab = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        staffTable1 = new javax.swing.JTable();
+        tableTable = new javax.swing.JTable();
         jPanel10 = new javax.swing.JPanel();
         addTableBtn = new javax.swing.JButton();
         removeTableBtn = new javax.swing.JButton();
@@ -511,7 +519,7 @@ public class DashBoardForm extends javax.swing.JFrame {
 
         mainBoard.addTab("tab2", stafftab);
 
-        staffTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -530,13 +538,14 @@ public class DashBoardForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane4.setViewportView(staffTable1);
-        if (staffTable1.getColumnModel().getColumnCount() > 0) {
-            staffTable1.getColumnModel().getColumn(0).setResizable(false);
-            staffTable1.getColumnModel().getColumn(0).setPreferredWidth(40);
-            staffTable1.getColumnModel().getColumn(1).setResizable(false);
-            staffTable1.getColumnModel().getColumn(1).setPreferredWidth(40);
-            staffTable1.getColumnModel().getColumn(2).setResizable(false);
+        tableTable.setRowHeight(40);
+        jScrollPane4.setViewportView(tableTable);
+        if (tableTable.getColumnModel().getColumnCount() > 0) {
+            tableTable.getColumnModel().getColumn(0).setResizable(false);
+            tableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            tableTable.getColumnModel().getColumn(1).setResizable(false);
+            tableTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+            tableTable.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jPanel10.setLayout(new java.awt.GridLayout(1, 0));
@@ -884,6 +893,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         addStaffForm.setLocationRelativeTo(null);
         addStaffForm.setVisible(true);
         addStaffForm.setDefaultCloseOperation(addStaffForm.HIDE_ON_CLOSE);
+        addStaffForm.setResizable(false);
     }//GEN-LAST:event_addStaffBtnActionPerformed
 
     private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
@@ -891,6 +901,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         addDishForm.setLocationRelativeTo(null);
         addDishForm.setVisible(true);
         addDishForm.setDefaultCloseOperation(addDishForm.HIDE_ON_CLOSE);
+        addDishForm.setResizable(false);
     }//GEN-LAST:event_addDishBtnActionPerformed
 
     private void removeDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDishBtnActionPerformed
@@ -924,21 +935,32 @@ public class DashBoardForm extends javax.swing.JFrame {
         posForm.setLocationRelativeTo(null);
         posForm.setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
         posForm.setVisible(true);
+        posForm.setResizable(false);
     }//GEN-LAST:event_tableItem2MouseClicked
 
     private void addTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTableBtnActionPerformed
-        // TODO add your handling code here:
+        AddTableForm addTableForm = new AddTableForm(this);
+        addTableForm.setLocationRelativeTo(null);
+        addTableForm.setVisible(true);
+        addTableForm.setDefaultCloseOperation(addTableForm.HIDE_ON_CLOSE);
+        addTableForm.setResizable(false);
     }//GEN-LAST:event_addTableBtnActionPerformed
 
     private void removeTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTableBtnActionPerformed
-        // TODO add your handling code here:
+     if (tableTable.getSelectedRowCount() == 1) {
+            String id = String.valueOf(tableTable.getValueAt(tableTable.getSelectedRow(), 1));
+            TableService.delete(Integer.valueOf(id));
+            handleTableTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_removeTableBtnActionPerformed
 
     private void viewBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewBillActionPerformed
-          if (billTable.getSelectedRowCount() == 1) {
+        if (billTable.getSelectedRowCount() == 1) {
             int id = Integer.parseInt(billTable.getValueAt(billTable.getSelectedRow(), 1).toString());
             System.out.println(id);
-            Bill bill =BillService.getById(id);
+            Bill bill = BillService.getById(id);
             bill.printBill();
             BillForm f = new BillForm(bill);
             f.setLocationRelativeTo(null);
@@ -950,19 +972,30 @@ public class DashBoardForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
 
         }
-  
+
     }//GEN-LAST:event_viewBillActionPerformed
 
     private void updateTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateTableBtnActionPerformed
-        // TODO add your handling code here:
+       if (tableTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(tableTable.getValueAt(tableTable.getSelectedRow(), 1).toString());
+            Table table = TableService.getById(id);
+            System.err.println("Update table :v " + table);
+            UpdateTableForm f = new UpdateTableForm(this, table);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
     }//GEN-LAST:event_updateTableBtnActionPerformed
 
     private void updateStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStaffBtnActionPerformed
         if (staffTable.getSelectedRowCount() == 1) {
             int id = Integer.parseInt(staffTable.getValueAt(staffTable.getSelectedRow(), 1).toString());
-            System.out.println("Id of admin update " + String.valueOf(id));
             Admin admin = AdminService.getById(id);
-            System.out.println("Get first: " + admin.toString());
             UpdateStaffForm f = new UpdateStaffForm(this, admin);
             f.setLocationRelativeTo(null);
             f.setVisible(true);
@@ -1066,11 +1099,11 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JLabel revenueLabel;
     private javax.swing.JPanel staffItem;
     private javax.swing.JTable staffTable;
-    private javax.swing.JTable staffTable1;
     private javax.swing.JPanel stafftab;
     private javax.swing.JPanel tableItem;
     private javax.swing.JPanel tableItem1;
     private javax.swing.JPanel tableItem2;
+    private javax.swing.JTable tableTable;
     private javax.swing.JPanel tabletab;
     private javax.swing.JLabel title;
     private javax.swing.JButton updateDishBtn;

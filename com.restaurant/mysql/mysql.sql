@@ -39,9 +39,9 @@ select * from dish;
 select * from admin;
 create table dish(
 	id int not null auto_increment primary key,
-	name varchar(20) not null,
+	name varchar(50) not null,
     price DECIMAL(10, 2) not null,
-    category varchar(20),
+    category varchar(50),
     image mediumblob
 );
 create table bill(
@@ -55,6 +55,11 @@ create table billDish(
     quantity int not null,
     foreign key(billId) references bill(id),
     foreign key(dishId) references dish(id)
+);
+create table table(
+	id int not null auto_increment primary key,
+	name varchar(50),
+  
 )
 -- Insert records into the dish table
 INSERT INTO dish (name, price, category) VALUES
@@ -81,7 +86,7 @@ INSERT INTO billDish (billId, dishId, quantity) VALUES
 INSERT INTO billDish (billId, dishId, quantity) VALUES
 (7, 6, 6),  -- 2 servings of Salad
 (7, 8, 8);  -- 1 serving of Chocolate Cake;
-select * from bill where date(time) = "2023-12-06";
+select * from bill where time between "2023-12-15" and "2023-12-16";
 select * from bill, dish,billdish where bill.id = billdish.billid and dish.id = billdish.dishid ;
 INSERT INTO bill (time, price) VALUES
 ('2023-1-5 12:30:00', 12.32),
@@ -92,3 +97,4 @@ INSERT INTO bill (time, price) VALUES
 INSERT INTO bill (time, price) VALUES
 ('2023-12-16 12:30:00', 20.12);
 SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id
+SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id where b.id = 7

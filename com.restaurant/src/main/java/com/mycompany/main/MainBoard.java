@@ -9,9 +9,11 @@ import com.mycompany.model.Admin;
 import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
 import com.mycompany.service.BillService;
+import com.mycompany.service.DishService;
 import com.mycompany.util.DateUtil;
 import com.mycompany.view.AddDishForm;
 import com.mycompany.view.AddStaffForm;
+import com.mycompany.view.AddTableForm;
 import com.mycompany.view.BillForm;
 import com.mycompany.view.DashBoardForm;
 import com.mycompany.view.LoginForm;
@@ -21,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
@@ -34,9 +37,16 @@ public class MainBoard {
         LoginForm loginForm = new LoginForm();
         loginForm.setLocationRelativeTo(null);
         loginForm.setVisible(true);
-//        BillForm loginForm = new BillForm();
-//        loginForm.setLocationRelativeTo(null);
-//        loginForm.setVisible(true);
-      
+        loginForm.setResizable(false);
+//        AddTableForm addTableForm = new AddTableForm();
+//        addTableForm.setLocationRelativeTo(null);
+//        addTableForm.setVisible(true);  
+//        List<Dish> listDish = DishService.getAll();
+//        Bill bill = new Bill();
+//        bill.setTime(LocalDateTime.now());
+//        bill.add(listDish.get(1), 2);
+//        bill.add(listDish.get(2), 4);
+//        bill.add(listDish.get(3), 6);
+//        BillService.create(bill);
     }
 }

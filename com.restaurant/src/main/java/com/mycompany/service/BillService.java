@@ -26,4 +26,7 @@ public class BillService {
         Bill bill = BillDAO.getById(id);
         return bill;
     }
+    public static void create(Bill bill){
+        BillDAO.create(bill);
+    }
 }

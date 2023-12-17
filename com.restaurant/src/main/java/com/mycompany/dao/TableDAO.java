@@ -26,7 +26,7 @@ public class TableDAO {
         try {
 
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "select * from table";
+            String sql = "select * from _table";
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
             while (rs.next()) {
@@ -46,13 +46,13 @@ public class TableDAO {
     public static void create(Table table) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "INSERT INTO table (name) VALUES (?);";
+            String sql = "INSERT INTO _table (name) VALUES (?);";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setString(1, table.getName());
             
          
             int rs = preparedStatment.executeUpdate();
-            System.out.print(rs);
+         
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -61,7 +61,7 @@ public class TableDAO {
     public static void delete(int id){
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "delete from table where id = ?";
+            String sql = "delete from _table where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setInt(1, id);
             preparedStatment.executeUpdate();
@@ -75,7 +75,7 @@ public class TableDAO {
         try {
 
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "select * from table where id = ?";
+            String sql = "select * from _table where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setInt(1,id);
             ResultSet rs = preparedStatment.executeQuery();
@@ -92,11 +92,11 @@ public class TableDAO {
         return table;
     }
     public static void update(Table table){
-
+        
         try {
-
+            System.out.println(table.toString());
             Connection connect = JDBCConnection.getJDBCConnection();
-            String sql = "update table set name = ? where id = ?";
+            String sql = "update _table set name = ? where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
            
             preparedStatment.setString(1, table.getName());

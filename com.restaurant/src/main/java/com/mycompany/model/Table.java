@@ -45,6 +45,11 @@ public class Table {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Table{" + "id=" + id + ", name=" + name + ", status=" + status + '}';
+    }
      
     
 }
