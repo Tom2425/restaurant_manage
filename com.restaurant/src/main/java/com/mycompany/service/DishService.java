@@ -18,7 +18,10 @@ public class DishService extends Service{
     public DishService() {
         super();
     }
-    
+    public static Dish createDishFromBlob(Blob blob){
+        Dish posMenu = DishDAO.createDishFromBlob(blob);
+        return posMenu;
+    }
     public static List<Dish> getAll() {
         List<Dish> menu = DishDAO.getAll();
         return menu;

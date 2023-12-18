@@ -4,11 +4,13 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.dao.DishDAO;
 import com.mycompany.model.Dish;
 import com.mycompany.util.*;
 import com.mycompany.service.DishService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import com.mycompany.view.DashBoardForm;
 import java.awt.Component;
@@ -45,47 +47,63 @@ public class POSForm extends javax.swing.JFrame {
         
     }
     public void productHandleTable() {
-        Dish dish = new Dish();
+        List<Dish> dishList = DishDAO.getAll(); // Giả sử DishDAO.getAll() trả về List<Dish>
         DefaultTableModel proModel = (DefaultTableModel) prodctTable.getModel();
         proModel.setRowCount(0);
-        int proColumnCount = proModel.getColumnCount();
+
+        // Đặt số lượng cột hiển thị ảnh (ví dụ: 5 cột)
+        int numImageColumns = 5;
+
+        // Tạo một mảng để lưu trữ tất cả hình ảnh
+        JLabel[][] imageLabels = new JLabel[dishList.size()][numImageColumns];
+
+        // Điền mảng với hình ảnh từ danh sách Dish
+        int rowCounter = 0;
         int columnCounter = 0;
-        Object[] row = new Object[proColumnCount];
-        for(int i = 0; i< dish.getId() ; i++){
-            JLabel imageLabel = new JLabel();   
+        for (Dish dish : dishList) {
+            JLabel imageLabel = new JLabel();
             BufferedImage originalImage = dish.getImageAsBufferedImage();
             Image scaledImage = HandleImage.getScaledImage(originalImage, 120, 120);
             ImageIcon icon = new ImageIcon(scaledImage);
             imageLabel.setIcon(icon);
 
-            // Add the image icon to the table model
-            row[columnCounter++]= icon;
-            if(columnCounter == proColumnCount){
-                proModel.addRow(row);
-                columnCounter = 0;
-                row = new Object[proColumnCount];
-            }
-        prodctTable.getColumnModel().getColumn(0).setCellRenderer(new CellRenderer());
-        prodctTable.setRowHeight(120);
-        }
-    }
-        
+            imageLabels[rowCounter][columnCounter] = imageLabel;
 
-    class CellRenderer implements TableCellRenderer {
+            columnCounter++;
+            if (columnCounter == numImageColumns) {
+                columnCounter = 0;
+                rowCounter++;
+            }
+        }
+
+        // Thêm dữ liệu vào mô hình bảng
+        for (int row = 0; row < imageLabels.length; row++) {
+            proModel.addRow(imageLabels[row]);
+        }
+
+        // Đặt renderer cho tất cả các cột chứa hình ảnh
+        for (int i = 0; i < numImageColumns; i++) {
+            prodctTable.getColumnModel().getColumn(i).setCellRenderer(new ImageCellRenderer());
+        }
+
+        // Đặt chiều cao của dòng trong bảng
+        prodctTable.setRowHeight(120);
+    }
+
+
+
+
+    // Giả sử bạn có một custom cell renderer để hiển thị hình ảnh
+    class ImageCellRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table,
-                Object value,
-                boolean isSelected,
-                boolean hasFocus,
-                int row,
-                int column) {
-            JLabel label = new JLabel();
-            label.setIcon((Icon) value);
-            label.setHorizontalAlignment(JLabel.CENTER);
-            label.setVerticalAlignment(JLabel.CENTER);
-            return label;
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value instanceof JLabel) {
+                return (JLabel) value;
+            }
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -421,6 +439,11 @@ public class POSForm extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
         jScrollPane3.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -606,9 +629,14 @@ public class POSForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        new POSForm().setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
-        System.exit(0);
+        POSForm posForm = new POSForm();
+        posForm.setDefaultCloseOperation(DashBoardForm.DISPOSE_ON_CLOSE);
+        this.setVisible(false);
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jList1ValueChanged
     
     /**
      * @param args the command line arguments
@@ -648,33 +676,22 @@ public class POSForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel billIcon;
-    private javax.swing.JLabel deliIcon;
-    private javax.swing.JLabel deliIcon1;
     private javax.swing.JLabel deliIcon2;
-    private javax.swing.JLabel dinInIcon;
-    private javax.swing.JLabel dinInIcon1;
     private javax.swing.JLabel dinInIcon2;
     private javax.swing.JLabel holdIcon;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
-    private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -682,7 +699,6 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

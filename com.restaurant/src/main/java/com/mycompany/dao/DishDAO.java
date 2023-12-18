@@ -25,6 +25,19 @@ public class DishDAO {
     public DishDAO(){
         super();
     }
+    public static Dish createDishFromBlob(Blob blob) {
+        Dish dish = new Dish();
+        try {
+            if (blob != null) {
+                int blobLength = (int) blob.length();
+                byte[] imageBytes = blob.getBytes(1, blobLength);
+                dish.setImage(imageBytes);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dish;
+    }
     public static List<Dish> getAll() {
         List<Dish> dishs = new ArrayList<Dish>();
         try {
