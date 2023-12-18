@@ -38,6 +38,8 @@ public class MainBoard {
         loginForm.setLocationRelativeTo(null);
         loginForm.setVisible(true);
         loginForm.setResizable(false);
+        
+        
 //        AddTableForm addTableForm = new AddTableForm();
 //        addTableForm.setLocationRelativeTo(null);
 //        addTableForm.setVisible(true);  

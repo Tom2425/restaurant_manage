@@ -28,7 +28,7 @@ public class Dish {
         this.category = category;
         this.image  = image;
     }
-
+    
     public Dish() {
     }
 

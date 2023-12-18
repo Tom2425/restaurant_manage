@@ -6,6 +6,7 @@ package com.mycompany.service;
 
 import com.mycompany.dao.DishDAO;
 import com.mycompany.model.Dish;
+import java.sql.Blob;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 public class DishService extends Service{
 
     public DishService() {
-         super();
+        super();
     }
     
     public static List<Dish> getAll() {
