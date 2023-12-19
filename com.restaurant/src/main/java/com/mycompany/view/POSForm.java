@@ -9,6 +9,8 @@ import com.mycompany.model.Dish;
 import com.mycompany.util.*;
 import com.mycompany.service.DishService;
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -124,7 +126,10 @@ public class POSForm extends javax.swing.JFrame {
         }
     }
 
+    public void handleCellTable() {
 
+
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -174,7 +179,9 @@ public class POSForm extends javax.swing.JFrame {
         prodctTable = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        previewBillTable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         menu1.setLabel("File");
         menuBar1.add(menu1);
@@ -389,7 +396,7 @@ public class POSForm extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        catergList.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        catergList.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         catergList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -490,6 +497,11 @@ public class POSForm extends javax.swing.JFrame {
             }
         ));
         prodctTable.setRowHeight(120);
+        prodctTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                prodctTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(prodctTable);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -516,7 +528,7 @@ public class POSForm extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        previewBillTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -561,26 +573,30 @@ public class POSForm extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTable1.setGridColor(new java.awt.Color(255, 255, 255));
-        jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMinWidth(28);
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(28);
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(28);
-            jTable1.getColumnModel().getColumn(1).setMinWidth(112);
-            jTable1.getColumnModel().getColumn(1).setPreferredWidth(112);
-            jTable1.getColumnModel().getColumn(1).setMaxWidth(112);
-            jTable1.getColumnModel().getColumn(2).setMinWidth(28);
-            jTable1.getColumnModel().getColumn(2).setPreferredWidth(28);
-            jTable1.getColumnModel().getColumn(2).setMaxWidth(28);
-            jTable1.getColumnModel().getColumn(3).setMinWidth(56);
-            jTable1.getColumnModel().getColumn(3).setPreferredWidth(56);
-            jTable1.getColumnModel().getColumn(3).setMaxWidth(56);
-            jTable1.getColumnModel().getColumn(4).setMinWidth(56);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(56);
-            jTable1.getColumnModel().getColumn(4).setMaxWidth(56);
+        previewBillTable.setGridColor(new java.awt.Color(255, 255, 255));
+        previewBillTable.setSelectionBackground(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setViewportView(previewBillTable);
+        if (previewBillTable.getColumnModel().getColumnCount() > 0) {
+            previewBillTable.getColumnModel().getColumn(0).setMinWidth(28);
+            previewBillTable.getColumnModel().getColumn(0).setPreferredWidth(28);
+            previewBillTable.getColumnModel().getColumn(0).setMaxWidth(28);
+            previewBillTable.getColumnModel().getColumn(1).setMinWidth(112);
+            previewBillTable.getColumnModel().getColumn(1).setPreferredWidth(112);
+            previewBillTable.getColumnModel().getColumn(1).setMaxWidth(112);
+            previewBillTable.getColumnModel().getColumn(2).setMinWidth(28);
+            previewBillTable.getColumnModel().getColumn(2).setPreferredWidth(28);
+            previewBillTable.getColumnModel().getColumn(2).setMaxWidth(28);
+            previewBillTable.getColumnModel().getColumn(3).setMinWidth(56);
+            previewBillTable.getColumnModel().getColumn(3).setPreferredWidth(56);
+            previewBillTable.getColumnModel().getColumn(3).setMaxWidth(56);
+            previewBillTable.getColumnModel().getColumn(4).setMinWidth(56);
+            previewBillTable.getColumnModel().getColumn(4).setPreferredWidth(56);
+            previewBillTable.getColumnModel().getColumn(4).setMaxWidth(56);
         }
+
+        jButton1.setText("Check out");
+
+        jButton2.setText("Cancel");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -592,8 +608,15 @@ public class POSForm extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(jButton1)
+                        .addGap(42, 42, 42)
+                        .addComponent(jButton2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -609,7 +632,12 @@ public class POSForm extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButton1)
+                                    .addComponent(jButton2))))))
                 .addContainerGap())
         );
 
@@ -635,6 +663,10 @@ public class POSForm extends javax.swing.JFrame {
     private void catergListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_catergListMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_catergListMouseClicked
+
+    private void prodctTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_prodctTableMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prodctTableMouseClicked
     private static class CustomCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -691,6 +723,8 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JList<String> catergList;
     private javax.swing.JLabel deliIcon2;
     private javax.swing.JLabel dinInIcon2;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
@@ -711,7 +745,6 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
     private java.awt.Menu menu1;
     private java.awt.Menu menu2;
     private java.awt.Menu menu3;
@@ -726,6 +759,7 @@ public class POSForm extends javax.swing.JFrame {
     private java.awt.MenuBar menuBar4;
     private javax.swing.JPanel newBtn;
     private javax.swing.JLabel newIcon;
+    private javax.swing.JTable previewBillTable;
     private javax.swing.JTable prodctTable;
     private javax.swing.JLabel takeIcon;
     // End of variables declaration//GEN-END:variables
