@@ -164,4 +164,55 @@ public class DishDAO {
         }
   
     }
+    public static List<String> getCategory(){
+      
+        List<String> categories = new ArrayList<String>();
+        try {
+
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "select distinct category from dish";
+            Statement statment = connect.createStatement();
+            ResultSet rs = statment.executeQuery(sql);
+            while (rs.next()) {
+        
+                categories.add(rs.getString("category"));
+            }
+            return categories;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categories;
+   
+    }
+    public static List<Dish> getByCategory(String category){
+      
+        List<Dish> dishs = new ArrayList<Dish>();
+        try {
+
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "select * from dish where category = ?";
+            PreparedStatement preparedStatement = connect.prepareStatement(sql);
+            preparedStatement.setString(1, category);
+            ResultSet rs = preparedStatement.executeQuery();
+           while (rs.next()) {
+                Dish dish = new Dish();
+                dish.setId(rs.getInt("id"));
+                dish.setName(rs.getString("name"));
+                dish.setPrice(rs.getBigDecimal("price"));
+                dish.setCategory(rs.getString("category"));
+                Blob blob = rs.getBlob("image");
+                if (blob != null) {
+                    int blobLength = (int) blob.length();
+                    byte[] imageBytes = blob.getBytes(1, blobLength);
+                    dish.setImage(imageBytes);
+                }
+                dishs.add(dish);
+            }
+            return dishs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dishs;
+   
+    }
 }

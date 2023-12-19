@@ -45,4 +45,12 @@ public class DishService extends Service{
         Dish dish = DishDAO.getById(id);
         return dish;
     }
+    static public List<String>getCategory(){
+        List<String> categories = DishDAO.getCategory();
+        return categories;
+    }
+    static public List<Dish>getByCategory(String category){
+        List<Dish> dishs = DishDAO.getByCategory(category);
+        return dishs;
+    }
 }

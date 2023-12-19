@@ -76,7 +76,21 @@ public class POSForm extends javax.swing.JFrame {
 
             // Tạo label chứa ảnh
             JLabel imageLabel = new JLabel();
-            BufferedImage originalImage = dish.getImageAsBufferedImage();
+            BufferedImage originalImage = null;
+            String imagePath = "/image/image.png";
+            if (dish.getImage() == null) {
+                URL url = getClass().getResource(imagePath);
+                File file = new File(url.getPath());
+
+                try {
+                    originalImage = ImageIO.read(file);
+                } catch (IOException ex) {
+                    Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                originalImage = dish.getImageAsBufferedImage();
+            }
             Image scaledImage = HandleImage.getScaledImage(originalImage, 100, imageHeight);
             ImageIcon icon = new ImageIcon(scaledImage);
             imageLabel.setIcon(icon);
