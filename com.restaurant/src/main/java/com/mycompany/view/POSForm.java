@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import com.mycompany.view.DashBoardForm;
+import java.awt.*;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -47,27 +48,47 @@ public class POSForm extends javax.swing.JFrame {
         
     }
     public void productHandleTable() {
-        List<Dish> dishList = DishDAO.getAll(); // Giả sử DishDAO.getAll() trả về List<Dish>
+        List<Dish> dishList = DishDAO.getAll();
         DefaultTableModel proModel = (DefaultTableModel) prodctTable.getModel();
         proModel.setRowCount(0);
 
-        // Đặt số lượng cột hiển thị ảnh (ví dụ: 5 cột)
+        // Đặt số lượng cột hiển thị ảnh
         int numImageColumns = 5;
 
-        // Tạo một mảng để lưu trữ tất cả hình ảnh
-        JLabel[][] imageLabels = new JLabel[dishList.size()][numImageColumns];
+        // Điều chỉnh kích thước của ảnh và panel
+        int imageWidth = 120;
+        int imageHeight = 120;
+        int panelWidth = imageWidth + 10; // Thêm khoảng trắng giữa ảnh và mô tả
+        int panelHeight = imageHeight + 20; // Đủ để chứa cả label mô tả
 
-        // Điền mảng với hình ảnh từ danh sách Dish
+        // Tạo một mảng để lưu trữ tất cả các panel
+        JPanel[][] imagePanels = new JPanel[dishList.size()][numImageColumns];
+
+        // Điền mảng với panel từ danh sách Dish
         int rowCounter = 0;
         int columnCounter = 0;
         for (Dish dish : dishList) {
+            // Tạo panel chứa ảnh và mô tả
+            JPanel imagePanel = new JPanel();
+            imagePanel.setLayout(new BorderLayout());
+
+            // Tạo label chứa ảnh
             JLabel imageLabel = new JLabel();
             BufferedImage originalImage = dish.getImageAsBufferedImage();
-            Image scaledImage = HandleImage.getScaledImage(originalImage, 120, 120);
+            Image scaledImage = HandleImage.getScaledImage(originalImage, 100, imageHeight);
             ImageIcon icon = new ImageIcon(scaledImage);
             imageLabel.setIcon(icon);
 
-            imageLabels[rowCounter][columnCounter] = imageLabel;
+            // Tạo label chứa mô tả
+            JLabel descriptionLabel = new JLabel(dish.getName());
+
+            // Thêm label chứa ảnh và label chứa mô tả vào panel
+            imagePanel.add(imageLabel, BorderLayout.CENTER);
+            imagePanel.add(descriptionLabel, BorderLayout.SOUTH);
+            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+            // Thêm panel vào mảng
+            imagePanels[rowCounter][columnCounter] = imagePanel;
 
             columnCounter++;
             if (columnCounter == numImageColumns) {
@@ -77,30 +98,29 @@ public class POSForm extends javax.swing.JFrame {
         }
 
         // Thêm dữ liệu vào mô hình bảng
-        for (int row = 0; row < imageLabels.length; row++) {
-            proModel.addRow(imageLabels[row]);
+        for (int row = 0; row < imagePanels.length; row++) {
+            proModel.addRow(imagePanels[row]);
         }
 
-        // Đặt renderer cho tất cả các cột chứa hình ảnh
+        // Đặt renderer cho tất cả các cột chứa hình ảnh và mô tả
         for (int i = 0; i < numImageColumns; i++) {
             prodctTable.getColumnModel().getColumn(i).setCellRenderer(new ImageCellRenderer());
         }
 
         // Đặt chiều cao của dòng trong bảng
-        prodctTable.setRowHeight(120);
+        prodctTable.setRowHeight(panelHeight + 20);
     }
 
 
 
 
-    // Giả sử bạn có một custom cell renderer để hiển thị hình ảnh
     class ImageCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value instanceof JLabel) {
                 return (JLabel) value;
             }
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            return (Component) value;
         }
     }
 
@@ -132,15 +152,9 @@ public class POSForm extends javax.swing.JFrame {
         newBtn = new javax.swing.JPanel();
         newIcon = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
-        holdIcon = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         billIcon = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
-        kotIcon = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         deliIcon2 = new javax.swing.JLabel();
@@ -152,7 +166,9 @@ public class POSForm extends javax.swing.JFrame {
         dinInIcon2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        catergList = new javax.swing.JList<>();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         prodctTable = new javax.swing.JTable();
@@ -227,33 +243,6 @@ public class POSForm extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        holdIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/hold.png"))); // NOI18N
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel10.setText("Hold");
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(holdIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel10)
-                .addGap(33, 33, 33))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addComponent(holdIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel10)
-                .addGap(0, 26, Short.MAX_VALUE))
-        );
-
         billIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/bill.png"))); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -280,34 +269,6 @@ public class POSForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        kotIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/kot.png"))); // NOI18N
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel6.setText("KOT");
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(kotIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(jLabel6)))
-                .addContainerGap(30, Short.MAX_VALUE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(kotIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
-                .addGap(0, 26, Short.MAX_VALUE))
         );
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -396,17 +357,13 @@ public class POSForm extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(newBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
@@ -415,48 +372,81 @@ public class POSForm extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(newBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(newBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
         );
 
-        jPanel2.setBackground(new java.awt.Color(45, 179, 255));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        catergList.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        catergList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                jList1ValueChanged(evt);
+        catergList.setToolTipText("");
+        catergList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        catergList.setFixedCellHeight(25);
+        catergList.setSelectionBackground(new java.awt.Color(242, 242, 242));
+        catergList.setValueIsAdjusting(true);
+        catergList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                catergListMouseClicked(evt);
             }
         });
-        jScrollPane3.setViewportView(jList1);
+        catergList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                catergListValueChanged(evt);
+            }
+        });
+        jScrollPane3.setViewportView(catergList);
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel4.setText("All Catergories");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -510,9 +500,7 @@ public class POSForm extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
         );
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
@@ -617,11 +605,11 @@ public class POSForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 20, Short.MAX_VALUE)
+                        .addGap(0, 16, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
@@ -634,10 +622,34 @@ public class POSForm extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jLabel2MouseClicked
 
-    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+    private void catergListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_catergListValueChanged
+        List<Dish> caterg = DishService.getAll();
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (Dish dish : caterg){
+            model.addElement(dish.getCategory());
+        }
+        catergList.setModel(model);
+        catergList.setCellRenderer(new CustomCellRenderer());
+    }//GEN-LAST:event_catergListValueChanged
+
+    private void catergListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_catergListMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jList1ValueChanged
-    
+    }//GEN-LAST:event_catergListMouseClicked
+    private static class CustomCellRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                      boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            // Thiết lập viền cho JLabel
+            label.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
+
+            // Căn giữa nội dung của JLabel
+            label.setHorizontalAlignment(JLabel.CENTER);
+
+            return label;
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -676,19 +688,17 @@ public class POSForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel billIcon;
+    private javax.swing.JList<String> catergList;
     private javax.swing.JLabel deliIcon2;
     private javax.swing.JLabel dinInIcon2;
-    private javax.swing.JLabel holdIcon;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
@@ -696,14 +706,12 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
-    private javax.swing.JLabel kotIcon;
     private java.awt.Menu menu1;
     private java.awt.Menu menu2;
     private java.awt.Menu menu3;
