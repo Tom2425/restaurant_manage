@@ -194,7 +194,7 @@ public class DishDAO {
             PreparedStatement preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setString(1, category);
             ResultSet rs = preparedStatement.executeQuery();
-           while (rs.next()) {
+            while (rs.next()) {
                 Dish dish = new Dish();
                 dish.setId(rs.getInt("id"));
                 dish.setName(rs.getString("name"));

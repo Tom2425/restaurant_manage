@@ -34,14 +34,14 @@ import java.util.List;
 public class MainBoard {
 
     public static void main(String args[]) {
-//        LoginForm loginForm = new LoginForm();
-//        loginForm.setLocationRelativeTo(null);
-//        loginForm.setVisible(true);
-//        loginForm.setResizable(false);
-          List<String> list = DishService.getCategory();
-          for(String cate : list){
-              System.out.println(cate);
-          }
+        LoginForm loginForm = new LoginForm();
+        loginForm.setLocationRelativeTo(null);
+        loginForm.setVisible(true);
+        loginForm.setResizable(false);
+//          List<String> list = DishService.getCategory();
+//          for(String cate : list){
+//              System.out.println(cate);
+//          }
           List<Dish> dishes = DishService.getByCategory("Main Course");
           for(Dish dish : dishes){
               System.out.println(dish.toString());

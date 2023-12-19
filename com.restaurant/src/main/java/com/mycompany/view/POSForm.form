@@ -671,8 +671,8 @@
               <Table columnCount="5" rowCount="30">
                 <Column editable="true" title="SR" type="java.lang.Integer"/>
                 <Column editable="true" title="Prdct Name" type="java.lang.String"/>
-                <Column editable="true" title="Qty" type="java.lang.String"/>
                 <Column editable="true" title="Price" type="java.lang.Float"/>
+                <Column editable="true" title="Qty" type="java.lang.String"/>
                 <Column editable="true" title="Amount" type="java.lang.Float"/>
               </Table>
             </Property>
@@ -688,12 +688,12 @@
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="28" minWidth="28" prefWidth="28" resizable="true">
+                <Column maxWidth="56" minWidth="56" prefWidth="56" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="56" minWidth="56" prefWidth="56" resizable="true">
+                <Column maxWidth="28" minWidth="28" prefWidth="28" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
@@ -727,6 +727,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancel"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton2MouseClicked"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

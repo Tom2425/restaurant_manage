@@ -9,6 +9,7 @@ import com.mycompany.model.Dish;
 import com.mycompany.util.*;
 import com.mycompany.service.DishService;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
@@ -16,6 +17,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import com.mycompany.view.DashBoardForm;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -35,6 +38,7 @@ import javax.swing.table.TableCellRenderer;
 public class POSForm extends javax.swing.JFrame {
     private DashBoardForm dashBoard;
     private DishService dishService;
+    
     /**
      * Creates new form POSForm
      */
@@ -97,11 +101,14 @@ public class POSForm extends javax.swing.JFrame {
 
             // Tạo label chứa mô tả
             JLabel descriptionLabel = new JLabel(dish.getName());
+            JLabel priceLabel = new JLabel("Price: " + dish.getPrice()); 
 
-            // Thêm label chứa ảnh và label chứa mô tả vào panel
-            imagePanel.add(imageLabel, BorderLayout.CENTER);
-            imagePanel.add(descriptionLabel, BorderLayout.SOUTH);
-            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+            imagePanel.add(descriptionLabel,BorderLayout.CENTER);
+            imagePanel.add(imageLabel, BorderLayout.NORTH);
+            
+            imagePanel.add(priceLabel, BorderLayout.SOUTH);
+            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
+
 
             // Thêm panel vào mảng
             imagePanels[rowCounter][columnCounter] = imagePanel;
@@ -125,8 +132,33 @@ public class POSForm extends javax.swing.JFrame {
 
         // Đặt chiều cao của dòng trong bảng
         prodctTable.setRowHeight(panelHeight + 20);
-    }
+        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
+        previewModel.setRowCount(0);
+        prodctTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = prodctTable.rowAtPoint(e.getPoint());
+                int column = prodctTable.columnAtPoint(e.getPoint());
+                // Kiểm tra xem dòng và cột có hợp lệ không
+                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
+                    Dish selectedDish = dishList.get(row * numImageColumns + column);
 
+                    // Hiển thị thông tin vào bảng previewBillTable
+                    
+                    
+                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
+                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    // Thêm thông tin của selectedDish vào bảng previewBillTable
+                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
+                }
+            }
+        });
+
+    }
+    
 
 
 
@@ -576,11 +608,11 @@ public class POSForm extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "SR", "Prdct Name", "Qty", "Price", "Amount"
+                "SR", "Prdct Name", "Price", "Qty", "Amount"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Float.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Float.class, java.lang.String.class, java.lang.Float.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -597,12 +629,12 @@ public class POSForm extends javax.swing.JFrame {
             previewBillTable.getColumnModel().getColumn(1).setMinWidth(112);
             previewBillTable.getColumnModel().getColumn(1).setPreferredWidth(112);
             previewBillTable.getColumnModel().getColumn(1).setMaxWidth(112);
-            previewBillTable.getColumnModel().getColumn(2).setMinWidth(28);
-            previewBillTable.getColumnModel().getColumn(2).setPreferredWidth(28);
-            previewBillTable.getColumnModel().getColumn(2).setMaxWidth(28);
-            previewBillTable.getColumnModel().getColumn(3).setMinWidth(56);
-            previewBillTable.getColumnModel().getColumn(3).setPreferredWidth(56);
-            previewBillTable.getColumnModel().getColumn(3).setMaxWidth(56);
+            previewBillTable.getColumnModel().getColumn(2).setMinWidth(56);
+            previewBillTable.getColumnModel().getColumn(2).setPreferredWidth(56);
+            previewBillTable.getColumnModel().getColumn(2).setMaxWidth(56);
+            previewBillTable.getColumnModel().getColumn(3).setMinWidth(28);
+            previewBillTable.getColumnModel().getColumn(3).setPreferredWidth(28);
+            previewBillTable.getColumnModel().getColumn(3).setMaxWidth(28);
             previewBillTable.getColumnModel().getColumn(4).setMinWidth(56);
             previewBillTable.getColumnModel().getColumn(4).setPreferredWidth(56);
             previewBillTable.getColumnModel().getColumn(4).setMaxWidth(56);
@@ -611,6 +643,11 @@ public class POSForm extends javax.swing.JFrame {
         jButton1.setText("Check out");
 
         jButton2.setText("Cancel");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -665,22 +702,33 @@ public class POSForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void catergListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_catergListValueChanged
-        List<Dish> caterg = DishService.getAll();
+        List<String> list = DishService.getCategory();
         DefaultListModel<String> model = new DefaultListModel<>();
-        for (Dish dish : caterg){
-            model.addElement(dish.getCategory());
+        for (String cate : list){
+            model.addElement(cate);
         }
         catergList.setModel(model);
         catergList.setCellRenderer(new CustomCellRenderer());
+        catergList = new javax.swing.JList<>();
+        catergList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                List<Dish> dishes = DishService.getByCategory(model.getElementAt(1));
+            }
+        });
     }//GEN-LAST:event_catergListValueChanged
 
     private void catergListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_catergListMouseClicked
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_catergListMouseClicked
 
     private void prodctTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_prodctTableMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_prodctTableMouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
+        previewModel.setRowCount(0); // Xóa dữ liệu cũ
+    }//GEN-LAST:event_jButton2MouseClicked
     private static class CustomCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
