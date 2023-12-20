@@ -19,6 +19,7 @@ import com.mycompany.view.DashBoardForm;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -50,7 +51,7 @@ public class POSForm extends javax.swing.JFrame {
         setTitle("POS");
         this.dashBoard = dashBoard;
         initComponents();
-        productHandleTable();
+        customComponents();
         
     }
     public void productHandleTable() {
@@ -105,7 +106,7 @@ public class POSForm extends javax.swing.JFrame {
 
             imagePanel.add(descriptionLabel,BorderLayout.CENTER);
             imagePanel.add(imageLabel, BorderLayout.NORTH);
-            
+
             imagePanel.add(priceLabel, BorderLayout.SOUTH);
             imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
 
@@ -132,33 +133,112 @@ public class POSForm extends javax.swing.JFrame {
 
         // Đặt chiều cao của dòng trong bảng
         prodctTable.setRowHeight(panelHeight + 20);
-        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
-        previewModel.setRowCount(0);
-        prodctTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = prodctTable.rowAtPoint(e.getPoint());
-                int column = prodctTable.columnAtPoint(e.getPoint());
-                // Kiểm tra xem dòng và cột có hợp lệ không
-                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
-                    Dish selectedDish = dishList.get(row * numImageColumns + column);
+        productMouseListener();
+    }    
+    public void getProductByCatergory(String catergory) {
+        List<Dish> dishList = DishService.getByCategory(catergory);
+        DefaultTableModel proModel = (DefaultTableModel) prodctTable.getModel();
+        proModel.setRowCount(0);
 
-                    // Hiển thị thông tin vào bảng previewBillTable
-                    
-                    
-                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
-                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    // Thêm thông tin của selectedDish vào bảng previewBillTable
-                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
+        // Đặt số lượng cột hiển thị ảnh
+        int numImageColumns = 5;
+
+        // Điều chỉnh kích thước của ảnh và panel
+        int imageWidth = 120;
+        int imageHeight = 120;
+        int panelWidth = imageWidth + 10; // Thêm khoảng trắng giữa ảnh và mô tả
+        int panelHeight = imageHeight + 20; // Đủ để chứa cả label mô tả
+
+        // Tạo một mảng để lưu trữ tất cả các panel
+        JPanel[][] imagePanels = new JPanel[dishList.size()][numImageColumns];
+
+        // Điền mảng với panel từ danh sách Dish
+        int rowCounter = 0;
+        int columnCounter = 0;
+        for (Dish dish : dishList) {
+            // Tạo panel chứa ảnh và mô tả
+            JPanel imagePanel = new JPanel();
+            imagePanel.setLayout(new BorderLayout());
+
+            // Tạo label chứa ảnh
+            JLabel imageLabel = new JLabel();
+            BufferedImage originalImage = null;
+            String imagePath = "/image/image.png";
+            if (dish.getImage() == null) {
+                URL url = getClass().getResource(imagePath);
+                File file = new File(url.getPath());
+
+                try {
+                    originalImage = ImageIO.read(file);
+                } catch (IOException ex) {
+                    Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-        });
 
+            } else {
+                originalImage = dish.getImageAsBufferedImage();
+            }
+            Image scaledImage = HandleImage.getScaledImage(originalImage, 100, imageHeight);
+            ImageIcon icon = new ImageIcon(scaledImage);
+            imageLabel.setIcon(icon);
+
+            // Tạo label chứa mô tả
+            JLabel descriptionLabel = new JLabel(dish.getName());
+            JLabel priceLabel = new JLabel("Price: " + dish.getPrice()); 
+
+            imagePanel.add(descriptionLabel,BorderLayout.CENTER);
+            imagePanel.add(imageLabel, BorderLayout.NORTH);
+
+            imagePanel.add(priceLabel, BorderLayout.SOUTH);
+            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
+
+
+            // Thêm panel vào mảng
+            imagePanels[rowCounter][columnCounter] = imagePanel;
+
+            columnCounter++;
+            if (columnCounter == numImageColumns) {
+                columnCounter = 0;
+                rowCounter++;
+            }
+        }
+
+        // Thêm dữ liệu vào mô hình bảng
+        for (int row = 0; row < imagePanels.length; row++) {
+            proModel.addRow(imagePanels[row]);
+        }
+
+        // Đặt renderer cho tất cả các cột chứa hình ảnh và mô tả
+        for (int i = 0; i < numImageColumns; i++) {
+            prodctTable.getColumnModel().getColumn(i).setCellRenderer(new ImageCellRenderer());
+        }
+
+        // Đặt chiều cao của dòng trong bảng
+        prodctTable.setRowHeight(panelHeight + 20);
+//        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
+//        previewModel.setRowCount(0);
+//        prodctTable.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                int row = prodctTable.rowAtPoint(e.getPoint());
+//                int column = prodctTable.columnAtPoint(e.getPoint());
+//                // Kiểm tra xem dòng và cột có hợp lệ không
+//                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
+//                    Dish selectedDish = dishList.get(row * numImageColumns + column);
+//
+//                    // Hiển thị thông tin vào bảng previewBillTable
+//
+//
+//                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+//                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
+//                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+//                    }
+//                    // Thêm thông tin của selectedDish vào bảng previewBillTable
+//                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
+//                }
+//            }
+//        });
     }
-    
 
 
 
@@ -171,10 +251,108 @@ public class POSForm extends javax.swing.JFrame {
             return (Component) value;
         }
     }
+    
+    public void productMouseListener(){
+        List<Dish> dishList = DishDAO.getAll( );;
+        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
+        int numImageColumns = 5;
+        previewModel.setRowCount(0);
+        
+        MouseListener[] mouseListeners = prodctTable.getMouseListeners();
+        for (MouseListener listener : mouseListeners) {
+            prodctTable.removeMouseListener(listener);
+        }
+        
+        prodctTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = prodctTable.rowAtPoint(e.getPoint());
+                int column = prodctTable.columnAtPoint(e.getPoint());
+                // Kiểm tra xem dòng và cột có hợp lệ không
+                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
+                    Dish selectedDish = dishList.get(row * numImageColumns + column);
 
-    public void handleCellTable() {
+                    // Hiển thị thông tin vào bảng previewBillTable
 
 
+                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
+                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    // Thêm thông tin của selectedDish vào bảng previewBillTable
+                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
+                }
+            }
+        });
+    }
+    
+    public void getProductByCateMouseListener(String catergory){
+        List<Dish> dishList = DishDAO.getByCategory(catergory);;
+        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
+        int numImageColumns = 5;
+       
+        MouseListener[] mouseListeners = prodctTable.getMouseListeners();
+        for (MouseListener listener : mouseListeners) {
+            prodctTable.removeMouseListener(listener);
+        }
+       
+        prodctTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = prodctTable.rowAtPoint(e.getPoint());
+                int column = prodctTable.columnAtPoint(e.getPoint());
+                // Kiểm tra xem dòng và cột có hợp lệ không
+                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
+                    Dish selectedDish = dishList.get(row * numImageColumns + column);
+
+                    // Hiển thị thông tin vào bảng previewBillTable
+
+
+                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
+                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                    // Thêm thông tin của selectedDish vào bảng previewBillTable
+                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
+                }
+            }
+        });
+    }
+
+    
+    public void MouseClickListener(){
+        MouseListener[] mouseListeners = prodctTable.getMouseListeners();
+        for (MouseListener listener : mouseListeners) {
+            prodctTable.removeMouseListener(listener);
+        }
+        allCatePanel.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                productHandleTable();
+            }
+        });
+        
+        catergList.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                JList<String> cateList = (JList<String>) e.getSource();
+                int index = cateList.locationToIndex(e.getPoint());
+                List<String> selectedCatergory = cateList.getSelectedValuesList();
+                if(index != -1){
+                    for(String cate : selectedCatergory){
+                        getProductByCatergory(cate);
+                        getProductByCateMouseListener(cate);
+                    }
+                }    
+            }    
+        });
+    }
+    
+    public void customComponents(){
+        productHandleTable();
+        MouseClickListener();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -218,7 +396,7 @@ public class POSForm extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         catergList = new javax.swing.JList<>();
-        jPanel5 = new javax.swing.JPanel();
+        allCatePanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -465,23 +643,33 @@ public class POSForm extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(catergList);
 
-        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        allCatePanel.setBackground(new java.awt.Color(255, 255, 255));
+        allCatePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        allCatePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                allCatePanelMouseClicked(evt);
+            }
+        });
 
         jLabel4.setText("All Catergories");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout allCatePanelLayout = new javax.swing.GroupLayout(allCatePanel);
+        allCatePanel.setLayout(allCatePanelLayout);
+        allCatePanelLayout.setHorizontalGroup(
+            allCatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(allCatePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+        allCatePanelLayout.setVerticalGroup(
+            allCatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, allCatePanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addContainerGap())
@@ -492,12 +680,12 @@ public class POSForm extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(allCatePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(allCatePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3))
         );
@@ -710,11 +898,6 @@ public class POSForm extends javax.swing.JFrame {
         catergList.setModel(model);
         catergList.setCellRenderer(new CustomCellRenderer());
         catergList = new javax.swing.JList<>();
-        catergList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                List<Dish> dishes = DishService.getByCategory(model.getElementAt(1));
-            }
-        });
     }//GEN-LAST:event_catergListValueChanged
 
     private void catergListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_catergListMouseClicked
@@ -729,6 +912,14 @@ public class POSForm extends javax.swing.JFrame {
         DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
         previewModel.setRowCount(0); // Xóa dữ liệu cũ
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void allCatePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_allCatePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_allCatePanelMouseClicked
     private static class CustomCellRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -781,6 +972,7 @@ public class POSForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel allCatePanel;
     private javax.swing.JLabel billIcon;
     private javax.swing.JList<String> catergList;
     private javax.swing.JLabel deliIcon2;
@@ -802,7 +994,6 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
