@@ -4,17 +4,46 @@
  */
 package com.mycompany.view;
 
+import com.mycompany.view.POSForm;
 import com.mycompany.model.Admin;
+import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
+import com.mycompany.model.Table;
 import com.mycompany.service.AdminService;
+import com.mycompany.service.BillService;
 import com.mycompany.service.DishService;
+import com.mycompany.service.TableService;
+import com.mycompany.util.DateUtil;
+import com.mycompany.util.HandleImage;
+import com.mycompany.util.ImageRenderer;
+import com.mycompany.util.TableActionCellEditor;
+import com.mycompany.util.TableActionCellRender;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -26,11 +55,13 @@ public class DashBoardForm extends javax.swing.JFrame {
      * Creates new form DashBoardForm
      */
     private final Admin admin;
+    private DateUtil billTimestamp;
 
     public DashBoardForm(Admin admin) {
         this.admin = admin;
-
+        this.billTimestamp = new DateUtil();
         initComponents();
+        handleRole();
         costomComponents();
 
 //        JPanel grid = new JPanel();
@@ -45,22 +76,147 @@ public class DashBoardForm extends javax.swing.JFrame {
     }
 
     public void handleMenuTable() {
-        List<Dish> menu = DishService.getAllDishes();
+        List<Dish> menu = DishService.getAll();
         DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
         model.setRowCount(0);
+        menuTable.getColumn("Image").setCellRenderer(new CellRenderer());
+
+        String imagePath = "/image/image.png";
 
         for (Dish dish : menu) {
-            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getName(), String.valueOf(dish.getPrice()), dish.getType()});
+            JLabel imageLabel = new JLabel();
+            BufferedImage originalImage = null;
+
+            if (dish.getImage() == null) {
+                URL url = getClass().getResource(imagePath);
+                File file = new File(url.getPath());
+
+                try {
+                    originalImage = ImageIO.read(file);
+                } catch (IOException ex) {
+                    Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                originalImage = dish.getImageAsBufferedImage();
+            }
+            Image scaledImage = HandleImage.getScaledImage(originalImage, 100, 50);
+            ImageIcon icon = new ImageIcon(scaledImage);
+            imageLabel.setIcon(icon);
+            model.addRow(new Object[]{String.valueOf(menu.indexOf(dish) + 1), dish.getId(), dish.getName(), String.valueOf(dish.getPrice()), dish.getCategory(), imageLabel});
         }
+        menuTable.setDefaultRenderer(Object.class, new CenterTextRenderer());
+
     }
 
+    class CellRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                Object value,
+                boolean isSelected,
+                boolean hasFocus,
+                int row,
+                int column) {
+
+            TableColumn tb = menuTable.getColumn("Image");
+            tb.setMaxWidth(100);
+            tb.setMinWidth(50);
+
+            menuTable.setRowHeight(60);
+
+            return (Component) value;
+        }
+
+    }
+
+    /**
+     *
+     */
     public void handlStaffTable() {
-        List<Admin> admins = AdminService.getAllAdmins();
+        List<Admin> admins = AdminService.getAll();
         DefaultTableModel model = (DefaultTableModel) staffTable.getModel();
         model.setRowCount(0);
 
         for (Admin admin : admins) {
-            model.addRow(new Object[]{String.valueOf(admins.indexOf(admin) + 1), admin.getName(), admin.getRole(), admin.getPhone()});
+            model.addRow(new Object[]{String.valueOf(admins.indexOf(admin) + 1), admin.getId(), admin.getName(), admin.getRole(), admin.getPhone()});
+        }
+        staffTable.setDefaultRenderer(Object.class, new CenterTextRenderer());
+    }
+
+    public void handleTableTable() {
+        List<Table> tables = TableService.getAll();
+        DefaultTableModel model = (DefaultTableModel) tableTable.getModel();
+        model.setRowCount(0);
+
+        for (Table table : tables) {
+            model.addRow(new Object[]{String.valueOf(tables.indexOf(table) + 1), table.getId(), table.getName()});
+        }
+        tableTable.setDefaultRenderer(Object.class, new CenterTextRenderer());
+    }
+
+    public void handleBillTable() {
+        String choseDate = dateRegularOption.getSelectedItem().toString();
+        List<Bill> list = null;
+        if (billTimestamp.getPrevousNumber() == 0) {
+            currentBtn.setEnabled(false);
+            nextBtn.setEnabled(false);
+        } else {
+            currentBtn.setEnabled(true);
+            nextBtn.setEnabled(true);
+        }
+        if (choseDate.equals("Daily")) {
+            LocalDate[] date = billTimestamp.getDailyDate();
+            dateLabel.setText(date[0].toString());
+            list = BillService.getWithDate(date[0], date[1]);
+        } else if (choseDate.equals("Weekly")) {
+            LocalDate[] date = billTimestamp.getWeeklyDate();
+            dateLabel.setText(date[0].toString() + " to " + date[1].toString());
+            list = BillService.getWithDate(date[0], date[1]);
+
+        } else if (choseDate.equals("Monthly")) {
+            LocalDate[] date = billTimestamp.getMonthlyDate();
+            dateLabel.setText(date[0].toString() + " to " + date[1].toString());
+            list = BillService.getWithDate(date[0], date[1]);
+
+        } else if (choseDate.equals("Yearly")) {
+            LocalDate[] date = billTimestamp.getYearlyDate();
+            dateLabel.setText(date[0].toString() + " to " + date[1].toString());
+            list = BillService.getWithDate(date[0], date[1]);
+
+        } else if (choseDate.equals("All Time")) {
+            list = BillService.getAll();
+            dateLabel.setText("");
+            currentBtn.setEnabled(false);
+            nextBtn.setEnabled(false);
+            previousBtn.setEnabled(false);
+        }
+        if (list == null) {
+            return;
+        }
+        DefaultTableModel model = (DefaultTableModel) billTable.getModel();
+        model.setRowCount(0);
+        BigDecimal total = BigDecimal.ZERO;
+        for (Bill bill : list) {
+            total = total.add(bill.calculateTotal());
+            model.addRow(new Object[]{String.valueOf(list.indexOf(bill) + 1), bill.getId(), bill.getTime(), bill.calculateTotal().toString() + "$"});
+        }
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        billTable.setDefaultRenderer(Object.class, new CenterTextRenderer());
+        revenueLabel.setText(total.toString() + "$");
+
+    }
+
+    public void handleRole() {
+        if (this.admin.getRole().equals("staff")) {
+            addDishBtn.setEnabled(false);
+            updateDishBtn.setEnabled(false);
+            removeDishBtn.setEnabled(false);
+
+            addStaffBtn.setEnabled(false);
+            updateStaffBtn.setEnabled(false);
+            removeStaffBtn.setEnabled(false);
         }
     }
 
@@ -69,7 +225,8 @@ public class DashBoardForm extends javax.swing.JFrame {
         adminRoleLabel.setText(adminRoleLabel.getText() + admin.getRole());
         handlStaffTable();
         handleMenuTable();
-
+        handleTableTable();
+        handleBillTable();
     }
 
     /**
@@ -77,6 +234,19 @@ public class DashBoardForm extends javax.swing.JFrame {
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
+    static class CenterTextRenderer extends DefaultTableCellRenderer {
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
+            Component rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // Set the text alignment to center
+            setHorizontalAlignment(JLabel.CENTER);
+
+            return rendererComponent;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -93,15 +263,36 @@ public class DashBoardForm extends javax.swing.JFrame {
         menuTab = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         menuTable = new javax.swing.JTable();
+        jPanel6 = new javax.swing.JPanel();
         addDishBtn = new javax.swing.JButton();
         removeDishBtn = new javax.swing.JButton();
+        updateDishBtn = new javax.swing.JButton();
         stafftab = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         staffTable = new javax.swing.JTable();
+        jPanel11 = new javax.swing.JPanel();
         addStaffBtn = new javax.swing.JButton();
         removeStaffBtn = new javax.swing.JButton();
+        updateStaffBtn = new javax.swing.JButton();
         tabletab = new javax.swing.JPanel();
-        tableTable = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tableTable = new javax.swing.JTable();
+        jPanel10 = new javax.swing.JPanel();
+        addTableBtn = new javax.swing.JButton();
+        removeTableBtn = new javax.swing.JButton();
+        updateTableBtn = new javax.swing.JButton();
+        billTab = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        billTable = new javax.swing.JTable();
+        jPanel8 = new javax.swing.JPanel();
+        dateRegularOption = new javax.swing.JComboBox<>();
+        viewBill = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        revenueLabel = new javax.swing.JLabel();
+        dateLabel = new javax.swing.JLabel();
+        nextBtn = new javax.swing.JButton();
+        currentBtn = new javax.swing.JButton();
+        previousBtn = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -113,6 +304,10 @@ public class DashBoardForm extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         tableItem = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        tableItem1 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        tableItem2 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         adminNameLabel = new javax.swing.JLabel();
         adminRoleLabel = new javax.swing.JLabel();
@@ -166,16 +361,41 @@ public class DashBoardForm extends javax.swing.JFrame {
 
         menuTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "SR", "Name", "Price", "Type"
+                "SR", "ID", "Name", "Price", "Category", "Image"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(menuTable);
+        if (menuTable.getColumnModel().getColumnCount() > 0) {
+            menuTable.getColumnModel().getColumn(0).setMinWidth(40);
+            menuTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            menuTable.getColumnModel().getColumn(0).setMaxWidth(40);
+            menuTable.getColumnModel().getColumn(1).setMinWidth(40);
+            menuTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+            menuTable.getColumnModel().getColumn(1).setMaxWidth(40);
+            menuTable.getColumnModel().getColumn(2).setResizable(false);
+            menuTable.getColumnModel().getColumn(2).setPreferredWidth(130);
+            menuTable.getColumnModel().getColumn(2).setHeaderValue("Name");
+            menuTable.getColumnModel().getColumn(3).setResizable(false);
+            menuTable.getColumnModel().getColumn(4).setResizable(false);
+            menuTable.getColumnModel().getColumn(5).setResizable(false);
+            menuTable.getColumnModel().getColumn(5).setHeaderValue("Image");
+        }
+
+        jPanel6.setLayout(new java.awt.GridLayout(1, 0));
 
         addDishBtn.setText("Add");
         addDishBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -183,6 +403,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                 addDishBtnActionPerformed(evt);
             }
         });
+        jPanel6.add(addDishBtn);
 
         removeDishBtn.setText("Remove");
         removeDishBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -190,6 +411,15 @@ public class DashBoardForm extends javax.swing.JFrame {
                 removeDishBtnActionPerformed(evt);
             }
         });
+        jPanel6.add(removeDishBtn);
+
+        updateDishBtn.setText("Update");
+        updateDishBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateDishBtnActionPerformed(evt);
+            }
+        });
+        jPanel6.add(updateDishBtn);
 
         javax.swing.GroupLayout menuTabLayout = new javax.swing.GroupLayout(menuTab);
         menuTab.setLayout(menuTabLayout);
@@ -197,35 +427,54 @@ public class DashBoardForm extends javax.swing.JFrame {
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(menuTabLayout.createSequentialGroup()
-                .addComponent(addDishBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeDishBtn)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         menuTabLayout.setVerticalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(menuTabLayout.createSequentialGroup()
-                .addGroup(menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(removeDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addDishBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         mainBoard.addTab("tab1", menuTab);
 
         staffTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "SR", "Name", "Status", "Phone"
+                "SR", "ID", "Name", "Status", "Phone"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        staffTable.setRowHeight(40);
         jScrollPane1.setViewportView(staffTable);
+        if (staffTable.getColumnModel().getColumnCount() > 0) {
+            staffTable.getColumnModel().getColumn(0).setMinWidth(40);
+            staffTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            staffTable.getColumnModel().getColumn(0).setMaxWidth(40);
+            staffTable.getColumnModel().getColumn(1).setMinWidth(40);
+            staffTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+            staffTable.getColumnModel().getColumn(1).setMaxWidth(40);
+            staffTable.getColumnModel().getColumn(2).setResizable(false);
+            staffTable.getColumnModel().getColumn(3).setResizable(false);
+            staffTable.getColumnModel().getColumn(4).setResizable(false);
+        }
+
+        jPanel11.setLayout(new java.awt.GridLayout(1, 0));
 
         addStaffBtn.setText("Add");
         addStaffBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -233,6 +482,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                 addStaffBtnActionPerformed(evt);
             }
         });
+        jPanel11.add(addStaffBtn);
 
         removeStaffBtn.setText("Remove");
         removeStaffBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -240,51 +490,236 @@ public class DashBoardForm extends javax.swing.JFrame {
                 removeStaffBtnActionPerformed(evt);
             }
         });
+        jPanel11.add(removeStaffBtn);
+
+        updateStaffBtn.setText("Update");
+        updateStaffBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateStaffBtnActionPerformed(evt);
+            }
+        });
+        jPanel11.add(updateStaffBtn);
 
         javax.swing.GroupLayout stafftabLayout = new javax.swing.GroupLayout(stafftab);
         stafftab.setLayout(stafftabLayout);
         stafftabLayout.setHorizontalGroup(
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
             .addGroup(stafftabLayout.createSequentialGroup()
-                .addComponent(addStaffBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeStaffBtn)
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         stafftabLayout.setVerticalGroup(
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, stafftabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(addStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(removeStaffBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainBoard.addTab("tab2", stafftab);
 
-        tableTable.setText("tab3");
+        tableTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "SR", "ID", "Name"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableTable.setRowHeight(40);
+        jScrollPane4.setViewportView(tableTable);
+        if (tableTable.getColumnModel().getColumnCount() > 0) {
+            tableTable.getColumnModel().getColumn(0).setResizable(false);
+            tableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            tableTable.getColumnModel().getColumn(1).setResizable(false);
+            tableTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+            tableTable.getColumnModel().getColumn(2).setResizable(false);
+        }
+
+        jPanel10.setLayout(new java.awt.GridLayout(1, 0));
+
+        addTableBtn.setText("Add");
+        addTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addTableBtnActionPerformed(evt);
+            }
+        });
+        jPanel10.add(addTableBtn);
+
+        removeTableBtn.setText("Remove");
+        removeTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeTableBtnActionPerformed(evt);
+            }
+        });
+        jPanel10.add(removeTableBtn);
+
+        updateTableBtn.setText("Update");
+        updateTableBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateTableBtnActionPerformed(evt);
+            }
+        });
+        jPanel10.add(updateTableBtn);
 
         javax.swing.GroupLayout tabletabLayout = new javax.swing.GroupLayout(tabletab);
         tabletab.setLayout(tabletabLayout);
         tabletabLayout.setHorizontalGroup(
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabletabLayout.createSequentialGroup()
-                .addContainerGap(315, Short.MAX_VALUE)
-                .addComponent(tableTable)
-                .addGap(261, 261, 261))
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addGroup(tabletabLayout.createSequentialGroup()
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         tabletabLayout.setVerticalGroup(
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tabletabLayout.createSequentialGroup()
-                .addGap(104, 104, 104)
-                .addComponent(tableTable)
-                .addContainerGap(328, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabletabLayout.createSequentialGroup()
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        mainBoard.addTab("tab3", tabletab);
+        mainBoard.addTab("tab2", tabletab);
+
+        billTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "SR", "ID", "Date", "Price"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        billTable.setRowHeight(25);
+        jScrollPane3.setViewportView(billTable);
+        if (billTable.getColumnModel().getColumnCount() > 0) {
+            billTable.getColumnModel().getColumn(0).setMinWidth(70);
+            billTable.getColumnModel().getColumn(0).setPreferredWidth(70);
+            billTable.getColumnModel().getColumn(0).setMaxWidth(70);
+            billTable.getColumnModel().getColumn(1).setMinWidth(70);
+            billTable.getColumnModel().getColumn(1).setPreferredWidth(70);
+            billTable.getColumnModel().getColumn(1).setMaxWidth(70);
+            billTable.getColumnModel().getColumn(2).setResizable(false);
+            billTable.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        jPanel8.setLayout(new java.awt.GridLayout(1, 0));
+
+        dateRegularOption.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Daily", "Weekly", "Monthly", "Yearly", "All Time" }));
+        dateRegularOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateRegularOptionActionPerformed(evt);
+            }
+        });
+
+        viewBill.setText("Detail");
+        viewBill.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewBillActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel10.setText("Revenue: ");
+
+        revenueLabel.setText("1");
+
+        dateLabel.setText("d1");
+
+        nextBtn.setText("Next");
+        nextBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextBtnActionPerformed(evt);
+            }
+        });
+
+        currentBtn.setText("Current");
+        currentBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                currentBtnActionPerformed(evt);
+            }
+        });
+
+        previousBtn.setText("Previous");
+        previousBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                previousBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout billTabLayout = new javax.swing.GroupLayout(billTab);
+        billTab.setLayout(billTabLayout);
+        billTabLayout.setHorizontalGroup(
+            billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3)
+            .addGroup(billTabLayout.createSequentialGroup()
+                .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(billTabLayout.createSequentialGroup()
+                        .addComponent(viewBill)
+                        .addGap(0, 0, 0)
+                        .addComponent(dateRegularOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(billTabLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(billTabLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(billTabLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(revenueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(billTabLayout.createSequentialGroup()
+                        .addComponent(previousBtn)
+                        .addGap(0, 0, 0)
+                        .addComponent(nextBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(currentBtn))
+                    .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+        billTabLayout.setVerticalGroup(
+            billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, billTabLayout.createSequentialGroup()
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(revenueLabel)
+                    .addComponent(jLabel10)
+                    .addComponent(dateLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(viewBill)
+                    .addComponent(dateRegularOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nextBtn)
+                    .addComponent(currentBtn)
+                    .addComponent(previousBtn))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        mainBoard.addTab("tab2", billTab);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -297,9 +732,9 @@ public class DashBoardForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(mainBoard, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(181, Short.MAX_VALUE))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
 
         jPanel9.add(jPanel2, java.awt.BorderLayout.EAST);
@@ -365,6 +800,32 @@ public class DashBoardForm extends javax.swing.JFrame {
 
         jPanel7.add(tableItem);
 
+        tableItem1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        tableItem1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableItem1MouseClicked(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Bill");
+        tableItem1.add(jLabel5);
+
+        jPanel7.add(tableItem1);
+
+        tableItem2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        tableItem2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableItem2MouseClicked(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setText("POS");
+        tableItem2.add(jLabel9);
+
+        jPanel7.add(tableItem2);
+
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         adminNameLabel.setText("Name:  ");
@@ -389,7 +850,7 @@ public class DashBoardForm extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -401,9 +862,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 6, Short.MAX_VALUE))
+            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -433,61 +892,223 @@ public class DashBoardForm extends javax.swing.JFrame {
         AddStaffForm addStaffForm = new AddStaffForm(this);
         addStaffForm.setLocationRelativeTo(null);
         addStaffForm.setVisible(true);
+        addStaffForm.setDefaultCloseOperation(addStaffForm.HIDE_ON_CLOSE);
+        addStaffForm.setResizable(false);
     }//GEN-LAST:event_addStaffBtnActionPerformed
 
     private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
         AddDishForm addDishForm = new AddDishForm(this);
         addDishForm.setLocationRelativeTo(null);
         addDishForm.setVisible(true);
+        addDishForm.setDefaultCloseOperation(addDishForm.HIDE_ON_CLOSE);
+        addDishForm.setResizable(false);
     }//GEN-LAST:event_addDishBtnActionPerformed
 
     private void removeDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeDishBtnActionPerformed
-        // TODO add your handling code here:
+        if (menuTable.getSelectedRowCount() == 1) {
+            String id = String.valueOf(menuTable.getValueAt(menuTable.getSelectedRow(), 1));
+            DishService.delete(Integer.valueOf(id));
+            handleMenuTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_removeDishBtnActionPerformed
 
     private void removeStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeStaffBtnActionPerformed
-        // TODO add your handling code here:
+        if (staffTable.getSelectedRowCount() == 1) {
+
+            String id = String.valueOf(staffTable.getValueAt(staffTable.getSelectedRow(), 1));
+            AdminService.delete(Integer.valueOf(id));
+            handlStaffTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_removeStaffBtnActionPerformed
+
+    private void tableItem1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableItem1MouseClicked
+        mainBoard.setSelectedIndex(3);
+        title.setText("Bill");
+    }//GEN-LAST:event_tableItem1MouseClicked
+
+    private void tableItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableItem2MouseClicked
+        POSForm posForm = new POSForm(this);
+        posForm.setLocationRelativeTo(null);
+        posForm.setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
+        posForm.setVisible(true);
+        posForm.setResizable(false);
+    }//GEN-LAST:event_tableItem2MouseClicked
+
+    private void addTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTableBtnActionPerformed
+        AddTableForm addTableForm = new AddTableForm(this);
+        addTableForm.setLocationRelativeTo(null);
+        addTableForm.setVisible(true);
+        addTableForm.setDefaultCloseOperation(addTableForm.HIDE_ON_CLOSE);
+        addTableForm.setResizable(false);
+    }//GEN-LAST:event_addTableBtnActionPerformed
+
+    private void removeTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTableBtnActionPerformed
+     if (tableTable.getSelectedRowCount() == 1) {
+            String id = String.valueOf(tableTable.getValueAt(tableTable.getSelectedRow(), 1));
+            TableService.delete(Integer.valueOf(id));
+            handleTableTable();
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_removeTableBtnActionPerformed
+
+    private void viewBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewBillActionPerformed
+        if (billTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(billTable.getValueAt(billTable.getSelectedRow(), 1).toString());
+            System.out.println(id);
+            Bill bill = BillService.getById(id);
+            bill.printBill();
+            BillForm f = new BillForm(bill);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+
+    }//GEN-LAST:event_viewBillActionPerformed
+
+    private void updateTableBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateTableBtnActionPerformed
+       if (tableTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(tableTable.getValueAt(tableTable.getSelectedRow(), 1).toString());
+            Table table = TableService.getById(id);
+            System.err.println("Update table :v " + table);
+            UpdateTableForm f = new UpdateTableForm(this, table);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+    }//GEN-LAST:event_updateTableBtnActionPerformed
+
+    private void updateStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStaffBtnActionPerformed
+        if (staffTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(staffTable.getValueAt(staffTable.getSelectedRow(), 1).toString());
+            Admin admin = AdminService.getById(id);
+            UpdateStaffForm f = new UpdateStaffForm(this, admin);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+    }//GEN-LAST:event_updateStaffBtnActionPerformed
+
+    private void updateDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateDishBtnActionPerformed
+        if (menuTable.getSelectedRowCount() == 1) {
+            int id = Integer.parseInt(menuTable.getValueAt(menuTable.getSelectedRow(), 1).toString());
+            Dish dish = DishService.getById(id);
+            UpdateDishForm f = new UpdateDishForm(this, dish);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+            f.setResizable(false);
+            f.setDefaultCloseOperation(f.HIDE_ON_CLOSE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "You must select a row in the table below before implementing this action!", "Note", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+    }//GEN-LAST:event_updateDishBtnActionPerformed
+
+    private void dateRegularOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateRegularOptionActionPerformed
+        String value = dateRegularOption.getSelectedItem().toString();
+        this.billTimestamp.getCurrent();
+        handleBillTable();
+    }//GEN-LAST:event_dateRegularOptionActionPerformed
+
+    private void previousBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousBtnActionPerformed
+        this.billTimestamp.getPrevious();
+        handleBillTable();
+    }//GEN-LAST:event_previousBtnActionPerformed
+
+    private void currentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentBtnActionPerformed
+        this.billTimestamp.getCurrent();
+        handleBillTable();
+    }//GEN-LAST:event_currentBtnActionPerformed
+
+    private void nextBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBtnActionPerformed
+        this.billTimestamp.getNext();
+        handleBillTable();
+
+    }//GEN-LAST:event_nextBtnActionPerformed
 
     /**
      * @param args the command line arguments
      */
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDishBtn;
     private javax.swing.JButton addStaffBtn;
+    private javax.swing.JButton addTableBtn;
     private javax.swing.JLabel adminNameLabel;
     private javax.swing.JLabel adminRoleLabel;
+    private javax.swing.JPanel billTab;
+    private javax.swing.JTable billTable;
+    private javax.swing.JButton currentBtn;
+    private javax.swing.JLabel dateLabel;
+    private javax.swing.JComboBox<String> dateRegularOption;
     private javax.swing.JPanel dish;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane mainBoard;
     private javax.swing.JPanel menuItem;
     private javax.swing.JPanel menuTab;
     private javax.swing.JTable menuTable;
+    private javax.swing.JButton nextBtn;
+    private javax.swing.JButton previousBtn;
     private javax.swing.JButton removeDishBtn;
     private javax.swing.JButton removeStaffBtn;
+    private javax.swing.JButton removeTableBtn;
+    private javax.swing.JLabel revenueLabel;
     private javax.swing.JPanel staffItem;
     private javax.swing.JTable staffTable;
     private javax.swing.JPanel stafftab;
     private javax.swing.JPanel tableItem;
-    private javax.swing.JLabel tableTable;
+    private javax.swing.JPanel tableItem1;
+    private javax.swing.JPanel tableItem2;
+    private javax.swing.JTable tableTable;
     private javax.swing.JPanel tabletab;
     private javax.swing.JLabel title;
+    private javax.swing.JButton updateDishBtn;
+    private javax.swing.JButton updateStaffBtn;
+    private javax.swing.JButton updateTableBtn;
+    private javax.swing.JButton viewBill;
     // End of variables declaration//GEN-END:variables
 }

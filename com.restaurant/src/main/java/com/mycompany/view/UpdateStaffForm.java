@@ -17,23 +17,39 @@ import javax.swing.JOptionPane;
  *
  * @author Admin
  */
-public class AddStaffForm extends javax.swing.JFrame {
+public class UpdateStaffForm extends javax.swing.JFrame {
 
     private DashBoardForm dashBoard;
+    private Admin admin;
 
     /**
      * Creates new form AddDish
      */
-    public AddStaffForm() {
+    public UpdateStaffForm() {
         initComponents();
     }
+    
 
-    public AddStaffForm(DashBoardForm dashBoard) {
+    public UpdateStaffForm(DashBoardForm dashBoard) {
         this.dashBoard = dashBoard;
         initComponents();
 
     }
+     public UpdateStaffForm(DashBoardForm dashBoard,Admin admin) {
+        this.admin  = admin;
+        this.dashBoard = dashBoard;
+        initComponents();
+       customComponent();
 
+    }
+    public void  customComponent(){
+            nameField.setText(this.admin.getName());
+            passwordField.setText(this.admin.getPassword());
+            confirmPasswordField.setText(this.admin.getPassword());
+            phoneField.setText(this.admin.getPhone());
+            usernameField.setText(this.admin.getUsername());
+            roleField.setSelectedItem(this.admin.getRole());
+    }
     public boolean validateUsernameField() {
         String regrex = "^[a-zA-Z][a-zA-Z0-9_]{5,20}$";
         Pattern p = Pattern.compile(regrex);
@@ -54,7 +70,7 @@ public class AddStaffForm extends javax.swing.JFrame {
                 return true;
 
             } else {
-                JOptionPane.showMessageDialog(this, "Your username is invalid!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Your username is invalid!!", "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
@@ -287,7 +303,7 @@ public class AddStaffForm extends javax.swing.JFrame {
             }
         });
 
-        addStaffBtn.setText("Add");
+        addStaffBtn.setText("Update");
         addStaffBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addStaffBtnActionPerformed(evt);
@@ -322,9 +338,9 @@ public class AddStaffForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(30, Short.MAX_VALUE)
+                .addContainerGap(15, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -352,12 +368,13 @@ public class AddStaffForm extends javax.swing.JFrame {
     private void addStaffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStaffBtnActionPerformed
         Admin admin = new Admin();
         if (validateNameField()&& validatePhoneField() && validateUsernameField() && validatePasswordField() && validateConfirmPasswordField()) {
+            admin.setId(this.admin.getId());
             admin.setName(nameField.getText());
             admin.setUsername(usernameField.getText());
             admin.setPassword(String.valueOf(passwordField.getPassword()));
             admin.setPhone(phoneField.getText());
             admin.setRole(String.valueOf(roleField.getSelectedItem()));
-            AdminService.create(admin);
+            AdminService.update(admin);
             this.dispose();
             this.dashBoard.handlStaffTable();
         }
@@ -394,14 +411,18 @@ public class AddStaffForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateStaffForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -410,7 +431,7 @@ public class AddStaffForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AddStaffForm().setVisible(true);
+                new UpdateStaffForm().setVisible(true);
             }
         });
     }

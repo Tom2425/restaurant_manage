@@ -4,7 +4,12 @@
  */
 package com.mycompany.model;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -14,17 +19,45 @@ public class Dish {
     private int id;
     private String name;
     private BigDecimal price;
-    private String type;
+    private String category;
+    private byte[] image;
 
-    public Dish(String name, BigDecimal price, String type) {
+    public Dish(String name, BigDecimal price, String category, byte[] image) {
         this.name = name;
         this.price = price;
-        this.type = type;
+        this.category = category;
+        this.image  = image;
     }
-
+    
     public Dish() {
     }
 
+    public Dish(String name, double price) {
+        this.name = name;
+        this.price = BigDecimal.valueOf(price);
+    }
+    public Image getImageAsImage() {
+        try {
+            if (image != null && image.length > 0) {
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
+                return ImageIO.read(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public BufferedImage getImageAsBufferedImage() {
+        try {
+            if (image != null && image.length > 0) {
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
+                return ImageIO.read(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public void setId(int id) {
         this.id = id;
     }
@@ -37,10 +70,14 @@ public class Dish {
         this.price = price;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+    
     public int getId() {
         return id;
     }
@@ -53,13 +90,17 @@ public class Dish {
         return price;
     }
 
-    public String getType() {
-        return type;
+    public String getCategory() {
+        return category;
+    }
+
+    public byte[] getImage() {
+        return image;
     }
 
     @Override
     public String toString() {
-        return "Dish{" + "id=" + id + ", name=" + name + ", price=" + price + ", type=" + type + '}';
+        return "Dish{" + "id=" + id + ", name=" + name + ", price=" + price + ", category=" + category + '}';
     }
     
     

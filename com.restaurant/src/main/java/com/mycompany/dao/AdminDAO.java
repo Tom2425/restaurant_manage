@@ -18,9 +18,14 @@ import java.util.List;
  *
  * @author Admin
  */
-public class AdminDAO {
+public class AdminDAO extends DAO {
 
-    public static List<Admin> getAllAdmins() {
+    public AdminDAO() {
+        super();
+    }
+
+    public static List<Admin> getAll() {
+
         List<Admin> admins = new ArrayList<Admin>();
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
@@ -41,8 +46,9 @@ public class AdminDAO {
         }
         return admins;
     }
-    public static Admin getByUsername(String username){
-        Admin admin = new Admin();
+
+    public static Admin getByUsername(String username) {
+        Admin admin = null;
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from admin where username = ?";
@@ -51,6 +57,7 @@ public class AdminDAO {
             preparedStatment.setString(1, username);
             ResultSet rs = preparedStatment.executeQuery();
             while (rs.next()) {
+                admin = new Admin();
                 admin.setId(rs.getInt("id"));
                 admin.setName(rs.getString("name"));
                 admin.setPhone(rs.getString("phone"));
@@ -59,15 +66,16 @@ public class AdminDAO {
                 System.out.println(admin.toString());
                 return admin;
             }
-            return null;
-                
+            return admin;
+
         } catch (SQLException e) {
-            
+
             e.printStackTrace();
-            return null;
+            return admin;
         }
     }
-    public static void createAdmin(Admin admin) {
+
+    public static void create(Admin admin) {
         try {
             Connection connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO admin (name, username, password, role, phone) VALUES(?, ?, ?, ?, ?)";
@@ -103,6 +111,7 @@ public class AdminDAO {
                 a.setUsername(rs.getString("username"));
                 a.setPassword(rs.getString("password"));
                 a.setRole(rs.getString("role"));
+                a.setPhone(rs.getString("phone"));
                 a.setIsAuth((true));
             }
             return a;
@@ -110,6 +119,67 @@ public class AdminDAO {
             e.printStackTrace();
         }
         return a;
+    }
+
+    public static void delete(int id) {
+        try {
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "delete from admin where id = ?";
+            PreparedStatement preparedStatment = connect.prepareStatement(sql);
+            preparedStatment.setInt(1, id);
+
+            preparedStatment.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Admin getById(int id) {
+        Admin a = new Admin();
+        try {
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "select * from admin where id = ?";
+            PreparedStatement preparedStatment = connect.prepareStatement(sql);
+            preparedStatment.setInt(1, id);
+
+            ResultSet rs = preparedStatment.executeQuery();
+            while (rs.next()) {
+
+                a.setId(rs.getInt("id"));
+                a.setName(rs.getString("name"));
+                a.setUsername(rs.getString("username"));
+                a.setPassword(rs.getString("password"));
+                a.setPhone(rs.getString("phone"));
+                a.setRole(rs.getString("role"));
+
+            }
+            return a;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return a;
+    }
+
+    public static void update(Admin admin) {
+        try {
+
+            Connection connect = JDBCConnection.getJDBCConnection();
+            String sql = "update admin set name = ?, username = ?, password = ?, role = ?, phone = ? where id = ?";
+            PreparedStatement preparedStatment = connect.prepareStatement(sql);
+
+            preparedStatment.setString(1, admin.getName());
+            preparedStatment.setString(2, admin.getUsername());
+            preparedStatment.setString(3, admin.getPassword());
+            preparedStatment.setString(4, admin.getRole());
+            preparedStatment.setString(5, admin.getPhone());
+            preparedStatment.setInt(6, admin.getId());
+
+            preparedStatment.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
