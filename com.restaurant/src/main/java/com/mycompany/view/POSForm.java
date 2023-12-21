@@ -327,7 +327,7 @@ public class POSForm extends javax.swing.JFrame {
         for (MouseListener listener : mouseListeners) {
             prodctTable.removeMouseListener(listener);
         }
-        allCatePanel.addMouseListener(new MouseAdapter(){
+        allCateLabel.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
                 productHandleTable();
@@ -397,7 +397,7 @@ public class POSForm extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         catergList = new javax.swing.JList<>();
         allCatePanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        allCateLabel = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         prodctTable = new javax.swing.JTable();
@@ -651,10 +651,10 @@ public class POSForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("All Catergories");
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        allCateLabel.setText("All Catergories");
+        allCateLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+                allCateLabelMouseClicked(evt);
             }
         });
 
@@ -662,17 +662,14 @@ public class POSForm extends javax.swing.JFrame {
         allCatePanel.setLayout(allCatePanelLayout);
         allCatePanelLayout.setHorizontalGroup(
             allCatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(allCatePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, allCatePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(allCateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         allCatePanelLayout.setVerticalGroup(
             allCatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, allCatePanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addContainerGap())
+            .addComponent(allCateLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -913,9 +910,9 @@ public class POSForm extends javax.swing.JFrame {
         previewModel.setRowCount(0); // Xóa dữ liệu cũ
     }//GEN-LAST:event_jButton2MouseClicked
 
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+    private void allCateLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_allCateLabelMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jLabel4MouseClicked
+    }//GEN-LAST:event_allCateLabelMouseClicked
 
     private void allCatePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_allCatePanelMouseClicked
         // TODO add your handling code here:
@@ -972,6 +969,7 @@ public class POSForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel allCateLabel;
     private javax.swing.JPanel allCatePanel;
     private javax.swing.JLabel billIcon;
     private javax.swing.JList<String> catergList;
@@ -984,7 +982,6 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
