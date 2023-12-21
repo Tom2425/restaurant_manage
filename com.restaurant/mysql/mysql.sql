@@ -56,26 +56,30 @@ create table billDish(
     foreign key(billId) references bill(id),
     foreign key(dishId) references dish(id)
 );
-create table table(
+create table _table(
 	id int not null auto_increment primary key,
 	name varchar(50),
-  
-)
+    status varchar(50)
+);
 -- Insert records into the dish table
 INSERT INTO dish (name, price, category) VALUES
 ('Pasta', 12.99, 'Main Course'),
 ('Salad', 7.99, 'Appetizer'),
 ('Chocolate Cake', 9.99, 'Dessert');
-
+INSERT INTO dish (name, price, category) VALUES
+('Beef steak', 12.22, 'Main Course'),
+('Poemecake', 9.99, 'Dessert'),
+('Lemon tart', 5.24,'Dessert');
 -- Insert records into the bill table
 INSERT INTO bill (date, price) VALUES
 ('2023-12-15 12:30:00', 30.97),
 ('2023-12-16 13:45:00', 25.50);
-
--- Get the auto-generated IDs of the inserted bills
-SET @billId1 = LAST_INSERT_ID();
-SET @billId2 = LAST_INSERT_ID() + 1;
 select * from dish;
+select * from admin;
+select * from _table;
+-- Get the auto-generated IDs of the inserted bills
+
+
 -- Insert records into the billDish table for the first bill
 INSERT INTO billDish (billId, dishId, quantity) VALUES
 (5, 8, 2),  -- 2 servings of Pasta
@@ -88,12 +92,13 @@ INSERT INTO billDish (billId, dishId, quantity) VALUES
 (7, 8, 8);  -- 1 serving of Chocolate Cake;
 select * from bill where time between "2023-12-15" and "2023-12-16";
 select * from bill, dish,billdish where bill.id = billdish.billid and dish.id = billdish.dishid ;
+
 INSERT INTO bill (time, price) VALUES
 ('2023-1-5 12:30:00', 12.32),
 ('2023-2-7 13:45:00', 25.50),
 ('2023-12-5 12:30:00', 12.32),
 ('2023-12-7 13:45:00', 25.50);
-
+select distinct category from dish;
 INSERT INTO bill (time, price) VALUES
 ('2023-12-16 12:30:00', 20.12);
 SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id
