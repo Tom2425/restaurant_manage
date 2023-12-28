@@ -6,9 +6,11 @@ package com.mycompany.view;
 
 import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
+import com.mycompany.model.Table;
 import com.mycompany.service.BillService;
 import java.awt.Font;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 
@@ -17,6 +19,7 @@ import javax.swing.JOptionPane;
  * @author Admin
  */
 public class BillCheckOutForm extends javax.swing.JFrame {
+
     private POSForm posForm;
     private Bill bill;
 
@@ -30,7 +33,7 @@ public class BillCheckOutForm extends javax.swing.JFrame {
         addToBill("hotdoggggg", 5, 2.20);
     }
 
-    public BillCheckOutForm(POSForm posForm,Bill bill) {
+    public BillCheckOutForm(POSForm posForm, Bill bill) {
         this.posForm = posForm;
         this.bill = bill;
         initComponents();
@@ -44,7 +47,7 @@ public class BillCheckOutForm extends javax.swing.JFrame {
         addTotal(bill.calculateTotal().doubleValue());
 
     }
-    
+
     public void costomComponents() {
         textAreaBill.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         textAreaBill.setEditable(false);
@@ -62,10 +65,12 @@ public class BillCheckOutForm extends javax.swing.JFrame {
         String line = String.format("%-25s(%d)\t%.2f$\n", itemName, quantity, price);
         textAreaBill.append(line);
     }
-     public void addTotal(double total) {
-          String totalLine = String.format("%-25s%.2f$\n", "Total:", total);
-    textAreaBill.append(totalLine);
+
+    public void addTotal(double total) {
+        String totalLine = String.format("%-25s%.2f$\n", "Total:", total);
+        textAreaBill.append(totalLine);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -148,19 +153,22 @@ public class BillCheckOutForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       
+
         try {
             this.bill.setTime(LocalDateTime.now());
-            BillService.create(this.bill); 
+            BillService.create(this.bill);
             JOptionPane.showMessageDialog(rootPane, "Bill has submitted!", "Message", JOptionPane.INFORMATION_MESSAGE);
             this.setVisible(false);
+            posForm.getOrderTable().setBill(bill.createCopy());
             posForm.handleBillReset();
+            posForm.handleOrderTable(null);
+            
         } catch (Exception e) {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      this.setVisible(false);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

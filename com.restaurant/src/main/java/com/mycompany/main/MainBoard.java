@@ -17,6 +17,7 @@ import com.mycompany.view.AddTableForm;
 import com.mycompany.view.BillForm;
 import com.mycompany.view.DashBoardForm;
 import com.mycompany.view.LoginForm;
+import com.mycompany.view.SelectTableForm;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,24 +39,7 @@ public class MainBoard {
         loginForm.setLocationRelativeTo(null);
         loginForm.setVisible(true);
         loginForm.setResizable(false);
-//          List<String> list = DishService.getCategory();
-//          for(String cate : list){
-//              System.out.println(cate);
-//          }
-//          List<Dish> dishes = DishService.getByCategory("Main Course");
-//          for(Dish dish : dishes){
-//              System.out.println(dish.toString());
-//          }
-//        
-//        AddTableForm addTableForm = new AddTableForm();
-//        addTableForm.setLocationRelativeTo(null);
-//        addTableForm.setVisible(true);  
-//        List<Dish> listDish = DishService.getAll();
-//        Bill bill = new Bill();
-//        bill.setTime(LocalDateTime.now());
-//        bill.add(listDish.get(1), 2);
-//        bill.add(listDish.get(2), 4);
-//        bill.add(listDish.get(3), 6);
-//        BillService.create(bill);
+
+    
     }
 }
