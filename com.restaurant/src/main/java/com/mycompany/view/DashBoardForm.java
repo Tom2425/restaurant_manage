@@ -18,6 +18,8 @@ import com.mycompany.util.HandleImage;
 import com.mycompany.util.ImageRenderer;
 import com.mycompany.util.TableActionCellEditor;
 import com.mycompany.util.TableActionCellRender;
+import java.awt.*;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -44,7 +46,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-
+import javax.swing.JPanel;
 /**
  *
  * @author Admin
@@ -63,7 +65,6 @@ public class DashBoardForm extends javax.swing.JFrame {
         initComponents();
         handleRole();
         costomComponents();
-
 //        JPanel grid = new JPanel();
 //        GridLayout lo = new GridLayout(0, 10);
 //        grid.setLayout(lo);
@@ -73,6 +74,34 @@ public class DashBoardForm extends javax.swing.JFrame {
 //
 //    // Assuming menuScroll is a JScrollPane
 //        menuScroll.setViewportView(grid);
+    }
+    class gradientPanel extends JPanel {
+        protected void paintComponent(Graphics g){
+            Graphics2D g2d = (Graphics2D) g;
+            int width = getWidth();
+            int height = getHeight();
+            
+            Color color2 = new Color(255,255,255);
+            Color color1 = new Color(157,98,245);
+            GradientPaint gp = new GradientPaint(0, 0 , color1, 180, height, color2);
+            g2d.setPaint(gp);
+            g2d.fillRect(0, 0, width, height);
+            
+        }
+    }
+    class gradientPanelbackground extends JPanel {
+        protected void paintComponent(Graphics gr){
+            Graphics2D g2d = (Graphics2D) gr;
+            int width = getWidth();
+            int height = getHeight();
+            
+            Color color2 = new Color(255,255,255);
+            Color color3 = new Color(0,190,255);
+            GradientPaint gp = new GradientPaint(0, 0 , color3, 180, height, color2);
+            g2d.setPaint(gp);
+            g2d.fillRect(0, 0, width, height);
+            
+        }
     }
 
     public void handleMenuTable() {
@@ -297,17 +326,17 @@ public class DashBoardForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        jPanel4 = new gradientPanelbackground();
         jPanel7 = new javax.swing.JPanel();
-        menuItem = new javax.swing.JPanel();
+        menuItem = new gradientPanel();
         jLabel6 = new javax.swing.JLabel();
-        staffItem = new javax.swing.JPanel();
+        staffItem = new gradientPanel();
         jLabel4 = new javax.swing.JLabel();
-        tableItem = new javax.swing.JPanel();
+        tableItem = new gradientPanel();
         jLabel3 = new javax.swing.JLabel();
-        tableItem1 = new javax.swing.JPanel();
+        tableItem1 = new gradientPanel();
         jLabel5 = new javax.swing.JLabel();
-        tableItem2 = new javax.swing.JPanel();
+        tableItem2 = new gradientPanel();
         jLabel9 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         adminNameLabel = new javax.swing.JLabel();
@@ -360,6 +389,8 @@ public class DashBoardForm extends javax.swing.JFrame {
 
         mainBoard.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
+        menuTab.setBackground(new java.awt.Color(255, 255, 255));
+
         menuTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -379,6 +410,8 @@ public class DashBoardForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        menuTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
+        menuTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane2.setViewportView(menuTable);
         if (menuTable.getColumnModel().getColumnCount() > 0) {
             menuTable.getColumnModel().getColumn(0).setMinWidth(40);
@@ -389,11 +422,9 @@ public class DashBoardForm extends javax.swing.JFrame {
             menuTable.getColumnModel().getColumn(1).setMaxWidth(40);
             menuTable.getColumnModel().getColumn(2).setResizable(false);
             menuTable.getColumnModel().getColumn(2).setPreferredWidth(130);
-            menuTable.getColumnModel().getColumn(2).setHeaderValue("Name");
             menuTable.getColumnModel().getColumn(3).setResizable(false);
             menuTable.getColumnModel().getColumn(4).setResizable(false);
             menuTable.getColumnModel().getColumn(5).setResizable(false);
-            menuTable.getColumnModel().getColumn(5).setHeaderValue("Image");
         }
 
         jPanel6.setLayout(new java.awt.GridLayout(1, 0));
@@ -426,21 +457,23 @@ public class DashBoardForm extends javax.swing.JFrame {
         menuTab.setLayout(menuTabLayout);
         menuTabLayout.setHorizontalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(menuTabLayout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 381, Short.MAX_VALUE))
+            .addComponent(jScrollPane2)
         );
         menuTabLayout.setVerticalGroup(
             menuTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(menuTabLayout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         mainBoard.addTab("tab1", menuTab);
+
+        stafftab.setBackground(new java.awt.Color(255, 255, 255));
 
         staffTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -462,6 +495,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         });
         staffTable.setRowHeight(40);
+        staffTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
+        staffTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(staffTable);
         if (staffTable.getColumnModel().getColumnCount() > 0) {
             staffTable.getColumnModel().getColumn(0).setMinWidth(40);
@@ -514,11 +549,14 @@ public class DashBoardForm extends javax.swing.JFrame {
             stafftabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, stafftabLayout.createSequentialGroup()
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         mainBoard.addTab("tab2", stafftab);
+
+        tabletab.setBackground(new java.awt.Color(255, 255, 255));
 
         tableTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -540,6 +578,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         });
         tableTable.setRowHeight(40);
+        tableTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
+        tableTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane4.setViewportView(tableTable);
         if (tableTable.getColumnModel().getColumnCount() > 0) {
             tableTable.getColumnModel().getColumn(0).setResizable(false);
@@ -588,11 +628,13 @@ public class DashBoardForm extends javax.swing.JFrame {
             tabletabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabletabLayout.createSequentialGroup()
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         mainBoard.addTab("tab2", tabletab);
+
+        billTab.setBackground(new java.awt.Color(255, 255, 255));
 
         billTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -603,6 +645,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         ));
         billTable.setRowHeight(25);
+        billTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
+        billTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane3.setViewportView(billTable);
         if (billTable.getColumnModel().getColumnCount() > 0) {
             billTable.getColumnModel().getColumn(0).setResizable(false);
@@ -670,7 +714,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                         .addComponent(viewBill)
                         .addGap(0, 0, 0)
                         .addComponent(dateRegularOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(billTabLayout.createSequentialGroup()
                         .addComponent(jLabel10)
@@ -708,7 +752,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                     .addComponent(currentBtn)
                     .addComponent(previousBtn)
                     .addComponent(jButton1))
-                .addGap(0, 0, 0)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -725,9 +769,9 @@ public class DashBoardForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(mainBoard, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(187, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainBoard, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(178, Short.MAX_VALUE))
         );
 
         jPanel9.add(jPanel2, java.awt.BorderLayout.EAST);
@@ -737,22 +781,24 @@ public class DashBoardForm extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(200, 400));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jPanel3.setBackground(new java.awt.Color(53, 47, 68));
+        jPanel3.setBackground(new java.awt.Color(87, 9, 178));
         jPanel3.setPreferredSize(new java.awt.Dimension(30, 50));
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Dashboard");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jPanel3.add(jLabel1);
 
         jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        jPanel4.setBackground(new java.awt.Color(185, 180, 199));
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setPreferredSize(new java.awt.Dimension(520, 440));
 
         jPanel7.setLayout(new java.awt.GridLayout(0, 1));
 
+        menuItem.setBackground(new java.awt.Color(255, 255, 255));
         menuItem.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         menuItem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -761,11 +807,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(120, 75, 211));
         jLabel6.setText("Menu");
         menuItem.add(jLabel6);
 
         jPanel7.add(menuItem);
 
+        staffItem.setBackground(new java.awt.Color(255, 255, 255));
         staffItem.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         staffItem.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         staffItem.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -775,11 +823,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(120, 75, 211));
         jLabel4.setText("Staff");
         staffItem.add(jLabel4);
 
         jPanel7.add(staffItem);
 
+        tableItem.setBackground(new java.awt.Color(255, 255, 255));
         tableItem.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         tableItem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -788,11 +838,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(120, 75, 211));
         jLabel3.setText("Table");
         tableItem.add(jLabel3);
 
         jPanel7.add(tableItem);
 
+        tableItem1.setBackground(new java.awt.Color(255, 255, 255));
         tableItem1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         tableItem1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -801,11 +853,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(120, 75, 211));
         jLabel5.setText("Bill");
         tableItem1.add(jLabel5);
 
         jPanel7.add(tableItem1);
 
+        tableItem2.setBackground(new java.awt.Color(255, 255, 255));
         tableItem2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         tableItem2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -814,20 +868,24 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(120, 75, 211));
         jLabel9.setText("POS");
         tableItem2.add(jLabel9);
 
         jPanel7.add(tableItem2);
 
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
+        adminNameLabel.setBackground(new java.awt.Color(255, 255, 255));
         adminNameLabel.setText("Name:  ");
         adminNameLabel.setPreferredSize(new java.awt.Dimension(35, 25));
         jPanel5.add(adminNameLabel, java.awt.BorderLayout.PAGE_START);
 
+        adminRoleLabel.setBackground(new java.awt.Color(255, 255, 255));
         adminRoleLabel.setText("Role: ");
         adminRoleLabel.setPreferredSize(new java.awt.Dimension(24, 25));
-        jPanel5.add(adminRoleLabel, java.awt.BorderLayout.PAGE_END);
+        jPanel5.add(adminRoleLabel, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -856,9 +914,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
