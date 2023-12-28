@@ -42,11 +42,11 @@ public class MainBoard {
 //          for(String cate : list){
 //              System.out.println(cate);
 //          }
-          List<Dish> dishes = DishService.getByCategory("Main Course");
-          for(Dish dish : dishes){
-              System.out.println(dish.toString());
-          }
-        
+//          List<Dish> dishes = DishService.getByCategory("Main Course");
+//          for(Dish dish : dishes){
+//              System.out.println(dish.toString());
+//          }
+//        
 //        AddTableForm addTableForm = new AddTableForm();
 //        addTableForm.setLocationRelativeTo(null);
 //        addTableForm.setVisible(true);  

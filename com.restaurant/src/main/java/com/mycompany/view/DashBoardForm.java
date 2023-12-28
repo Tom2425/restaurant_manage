@@ -293,6 +293,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         nextBtn = new javax.swing.JButton();
         currentBtn = new javax.swing.JButton();
         previousBtn = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -595,34 +596,16 @@ public class DashBoardForm extends javax.swing.JFrame {
 
         billTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "SR", "ID", "Date", "Price"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         billTable.setRowHeight(25);
         jScrollPane3.setViewportView(billTable);
         if (billTable.getColumnModel().getColumnCount() > 0) {
-            billTable.getColumnModel().getColumn(0).setMinWidth(70);
-            billTable.getColumnModel().getColumn(0).setPreferredWidth(70);
-            billTable.getColumnModel().getColumn(0).setMaxWidth(70);
-            billTable.getColumnModel().getColumn(1).setMinWidth(70);
-            billTable.getColumnModel().getColumn(1).setPreferredWidth(70);
-            billTable.getColumnModel().getColumn(1).setMaxWidth(70);
-            billTable.getColumnModel().getColumn(2).setResizable(false);
-            billTable.getColumnModel().getColumn(3).setResizable(false);
+            billTable.getColumnModel().getColumn(0).setResizable(false);
         }
 
         jPanel8.setLayout(new java.awt.GridLayout(1, 0));
@@ -669,6 +652,13 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout billTabLayout = new javax.swing.GroupLayout(billTab);
         billTab.setLayout(billTabLayout);
         billTabLayout.setHorizontalGroup(
@@ -679,7 +669,9 @@ public class DashBoardForm extends javax.swing.JFrame {
                     .addGroup(billTabLayout.createSequentialGroup()
                         .addComponent(viewBill)
                         .addGap(0, 0, 0)
-                        .addComponent(dateRegularOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(dateRegularOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(billTabLayout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -689,7 +681,7 @@ public class DashBoardForm extends javax.swing.JFrame {
                             .addGroup(billTabLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(revenueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addGroup(billTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(billTabLayout.createSequentialGroup()
                         .addComponent(previousBtn)
@@ -714,7 +706,8 @@ public class DashBoardForm extends javax.swing.JFrame {
                     .addComponent(dateRegularOption, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(nextBtn)
                     .addComponent(currentBtn)
-                    .addComponent(previousBtn))
+                    .addComponent(previousBtn)
+                    .addComponent(jButton1))
                 .addGap(0, 0, 0)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -841,10 +834,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1046,6 +1036,10 @@ public class DashBoardForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_nextBtnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        handleBillTable();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1061,6 +1055,7 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JLabel dateLabel;
     private javax.swing.JComboBox<String> dateRegularOption;
     private javax.swing.JPanel dish;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

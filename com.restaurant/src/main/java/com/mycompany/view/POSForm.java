@@ -5,6 +5,7 @@
 package com.mycompany.view;
 
 import com.mycompany.dao.DishDAO;
+import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
 import com.mycompany.util.*;
 import com.mycompany.service.DishService;
@@ -25,10 +26,13 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.table.TableCellRenderer;
 
@@ -37,25 +41,59 @@ import javax.swing.table.TableCellRenderer;
  * @author Tomioka
  */
 public class POSForm extends javax.swing.JFrame {
+
     private DashBoardForm dashBoard;
     private DishService dishService;
-    
+    private Bill bill;
+
     /**
      * Creates new form POSForm
      */
     public POSForm() {
         initComponents();
     }
-    
-    public POSForm(DashBoardForm dashBoard){
+
+    public POSForm(DashBoardForm dashBoard) {
         setTitle("POS");
         this.dashBoard = dashBoard;
+        this.bill = new Bill();
         initComponents();
         customComponents();
-        
+        List<String> list = DishService.getCategory();
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (String cate : list) {
+            model.addElement(cate);
+        }
+        catergList.setModel(model);
+        catergList.setCellRenderer(new CustomCellRenderer());
+        catergList = new javax.swing.JList<>();
+
     }
-    public void productHandleTable() {
-        List<Dish> dishList = DishDAO.getAll();
+
+    public boolean validateNatualNumber(String str) {
+        String regex = "^[1-9][0-9]*$";
+        String strr = str.trim();
+        if (strr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Quantity field mustn't be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else {
+            if (Pattern.matches(regex, strr)) {
+                return true;
+            }
+            JOptionPane.showMessageDialog(this, "Quantity field must be a natural number!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+
+        }
+
+    }
+
+    public void productHandleTable(String cate) {
+        List<Dish> dishList;
+        if (cate.equals("all")) {
+            dishList = DishService.getAll();
+        } else {
+            dishList = DishService.getByCategory(cate);
+        }
         DefaultTableModel proModel = (DefaultTableModel) prodctTable.getModel();
         proModel.setRowCount(0);
 
@@ -102,14 +140,13 @@ public class POSForm extends javax.swing.JFrame {
 
             // Tạo label chứa mô tả
             JLabel descriptionLabel = new JLabel(dish.getName());
-            JLabel priceLabel = new JLabel("Price: " + dish.getPrice()); 
+            JLabel priceLabel = new JLabel("Price: " + dish.getPrice());
 
-            imagePanel.add(descriptionLabel,BorderLayout.CENTER);
+            imagePanel.add(descriptionLabel, BorderLayout.CENTER);
             imagePanel.add(imageLabel, BorderLayout.NORTH);
 
             imagePanel.add(priceLabel, BorderLayout.SOUTH);
             imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
-
 
             // Thêm panel vào mảng
             imagePanels[rowCounter][columnCounter] = imagePanel;
@@ -133,116 +170,11 @@ public class POSForm extends javax.swing.JFrame {
 
         // Đặt chiều cao của dòng trong bảng
         prodctTable.setRowHeight(panelHeight + 20);
-        productMouseListener();
-    }    
-    public void getProductByCatergory(String catergory) {
-        List<Dish> dishList = DishService.getByCategory(catergory);
-        DefaultTableModel proModel = (DefaultTableModel) prodctTable.getModel();
-        proModel.setRowCount(0);
-
-        // Đặt số lượng cột hiển thị ảnh
-        int numImageColumns = 5;
-
-        // Điều chỉnh kích thước của ảnh và panel
-        int imageWidth = 120;
-        int imageHeight = 120;
-        int panelWidth = imageWidth + 10; // Thêm khoảng trắng giữa ảnh và mô tả
-        int panelHeight = imageHeight + 20; // Đủ để chứa cả label mô tả
-
-        // Tạo một mảng để lưu trữ tất cả các panel
-        JPanel[][] imagePanels = new JPanel[dishList.size()][numImageColumns];
-
-        // Điền mảng với panel từ danh sách Dish
-        int rowCounter = 0;
-        int columnCounter = 0;
-        for (Dish dish : dishList) {
-            // Tạo panel chứa ảnh và mô tả
-            JPanel imagePanel = new JPanel();
-            imagePanel.setLayout(new BorderLayout());
-
-            // Tạo label chứa ảnh
-            JLabel imageLabel = new JLabel();
-            BufferedImage originalImage = null;
-            String imagePath = "/image/image.png";
-            if (dish.getImage() == null) {
-                URL url = getClass().getResource(imagePath);
-                File file = new File(url.getPath());
-
-                try {
-                    originalImage = ImageIO.read(file);
-                } catch (IOException ex) {
-                    Logger.getLogger(DashBoardForm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            } else {
-                originalImage = dish.getImageAsBufferedImage();
-            }
-            Image scaledImage = HandleImage.getScaledImage(originalImage, 100, imageHeight);
-            ImageIcon icon = new ImageIcon(scaledImage);
-            imageLabel.setIcon(icon);
-
-            // Tạo label chứa mô tả
-            JLabel descriptionLabel = new JLabel(dish.getName());
-            JLabel priceLabel = new JLabel("Price: " + dish.getPrice()); 
-
-            imagePanel.add(descriptionLabel,BorderLayout.CENTER);
-            imagePanel.add(imageLabel, BorderLayout.NORTH);
-
-            imagePanel.add(priceLabel, BorderLayout.SOUTH);
-            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
-
-
-            // Thêm panel vào mảng
-            imagePanels[rowCounter][columnCounter] = imagePanel;
-
-            columnCounter++;
-            if (columnCounter == numImageColumns) {
-                columnCounter = 0;
-                rowCounter++;
-            }
-        }
-
-        // Thêm dữ liệu vào mô hình bảng
-        for (int row = 0; row < imagePanels.length; row++) {
-            proModel.addRow(imagePanels[row]);
-        }
-
-        // Đặt renderer cho tất cả các cột chứa hình ảnh và mô tả
-        for (int i = 0; i < numImageColumns; i++) {
-            prodctTable.getColumnModel().getColumn(i).setCellRenderer(new ImageCellRenderer());
-        }
-
-        // Đặt chiều cao của dòng trong bảng
-        prodctTable.setRowHeight(panelHeight + 20);
-//        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
-//        previewModel.setRowCount(0);
-//        prodctTable.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                int row = prodctTable.rowAtPoint(e.getPoint());
-//                int column = prodctTable.columnAtPoint(e.getPoint());
-//                // Kiểm tra xem dòng và cột có hợp lệ không
-//                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
-//                    Dish selectedDish = dishList.get(row * numImageColumns + column);
-//
-//                    // Hiển thị thông tin vào bảng previewBillTable
-//
-//
-//                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-//                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-//                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
-//                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-//                    }
-//                    // Thêm thông tin của selectedDish vào bảng previewBillTable
-//                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
-//                }
-//            }
-//        });
+        productMouseListener(cate);
     }
-
-
 
     class ImageCellRenderer extends DefaultTableCellRenderer {
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value instanceof JLabel) {
@@ -251,109 +183,96 @@ public class POSForm extends javax.swing.JFrame {
             return (Component) value;
         }
     }
-    
-    public void productMouseListener(){
-        List<Dish> dishList = DishDAO.getAll( );;
-        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
+
+    public void handleBillReset() {
+        this.bill.reset();
+        handleTablePreview();
+    }
+
+    public void productMouseListener(String cate) {
+        System.out.println("Nice ");
+        List<Dish> dishList;
+        if (cate.equals("all")) {
+            dishList = DishService.getAll();
+        } else {
+            dishList = DishService.getByCategory(cate);
+        }
+//        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
         int numImageColumns = 5;
+
+        MouseListener[] mouseListeners = prodctTable.getMouseListeners();
+        for (MouseListener listener : mouseListeners) {
+            prodctTable.removeMouseListener(listener);
+        }
+
+        prodctTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = prodctTable.rowAtPoint(e.getPoint());
+                int column = prodctTable.columnAtPoint(e.getPoint());
+                // Kiểm tra xem dòng và cột có hợp lệ không
+                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
+                    Dish selectedDish = dishList.get(row * numImageColumns + column);
+
+                    // Hiển thị thông tin vào bảng previewBillTable
+                    // Thêm thông tin của selectedDish vào bảng previewBillTable
+                    POSForm.this.bill.add(selectedDish, 1);
+                    handleTablePreview();
+                    System.out.println(selectedDish.toString());
+                }
+            }
+        });
+    }
+
+    public void handleTablePreview() {
+        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
         previewModel.setRowCount(0);
-        
-        MouseListener[] mouseListeners = prodctTable.getMouseListeners();
-        for (MouseListener listener : mouseListeners) {
-            prodctTable.removeMouseListener(listener);
-        }
-        
-        prodctTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = prodctTable.rowAtPoint(e.getPoint());
-                int column = prodctTable.columnAtPoint(e.getPoint());
-                // Kiểm tra xem dòng và cột có hợp lệ không
-                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
-                    Dish selectedDish = dishList.get(row * numImageColumns + column);
-
-                    // Hiển thị thông tin vào bảng previewBillTable
-
-
-                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
-                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    // Thêm thông tin của selectedDish vào bảng previewBillTable
-                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
-                }
+        int index = 1;
+        for (Map.Entry<Dish, Integer> entry : bill.getList().entrySet()) {
+            Dish dish = entry.getKey();
+            int quantity = entry.getValue();
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+            centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+            for (int i = 0; i < previewBillTable.getColumnCount(); i++) {
+                previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             }
-        });
-    }
-    
-    public void getProductByCateMouseListener(String catergory){
-        List<Dish> dishList = DishDAO.getByCategory(catergory);;
-        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
-        int numImageColumns = 5;
-       
-        MouseListener[] mouseListeners = prodctTable.getMouseListeners();
-        for (MouseListener listener : mouseListeners) {
-            prodctTable.removeMouseListener(listener);
+            previewModel.addRow(new Object[]{index++, dish.getId(), dish.getName(), dish.getPrice(), quantity, dish.getPrice().multiply(BigDecimal.valueOf(quantity))});
         }
-       
-        prodctTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = prodctTable.rowAtPoint(e.getPoint());
-                int column = prodctTable.columnAtPoint(e.getPoint());
-                // Kiểm tra xem dòng và cột có hợp lệ không
-                if (row >= 0 && column >= 0 && row < dishList.size() && column < numImageColumns) {
-                    Dish selectedDish = dishList.get(row * numImageColumns + column);
-
-                    // Hiển thị thông tin vào bảng previewBillTable
-
-
-                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-                    for (int i= 0; i<previewBillTable.getColumnCount(); i++){
-                        previewBillTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                    }
-                    // Thêm thông tin của selectedDish vào bảng previewBillTable
-                    previewModel.addRow(new Object[]{selectedDish.getId(),selectedDish.getName(), selectedDish.getPrice()});
-                }
-            }
-        });
     }
 
-    
-    public void MouseClickListener(){
+    public void MouseClickListener() {
         MouseListener[] mouseListeners = prodctTable.getMouseListeners();
         for (MouseListener listener : mouseListeners) {
             prodctTable.removeMouseListener(listener);
         }
-        allCateLabel.addMouseListener(new MouseAdapter(){
+        allCateLabel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
-                productHandleTable();
+            public void mouseClicked(MouseEvent e) {
+                productHandleTable("all");
             }
         });
-        
-        catergList.addMouseListener(new MouseAdapter(){
+
+        catergList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 JList<String> cateList = (JList<String>) e.getSource();
                 int index = cateList.locationToIndex(e.getPoint());
                 List<String> selectedCatergory = cateList.getSelectedValuesList();
-                if(index != -1){
-                    for(String cate : selectedCatergory){
-                        getProductByCatergory(cate);
-                        getProductByCateMouseListener(cate);
+                if (index != -1) {
+                    for (String cate : selectedCatergory) {
+                        productHandleTable(cate);
                     }
-                }    
-            }    
+                }
+            }
         });
     }
-    
-    public void customComponents(){
-        productHandleTable();
+
+    public void customComponents() {
         MouseClickListener();
+        productHandleTable("all");
+        handleTablePreview();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -402,10 +321,12 @@ public class POSForm extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         prodctTable = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane4 = new javax.swing.JScrollPane();
         previewBillTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         menu1.setLabel("File");
         menuBar1.add(menu1);
@@ -598,7 +519,7 @@ public class POSForm extends javax.swing.JFrame {
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addGap(30, 30, 30))
+                .addGap(25, 25, 25))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -613,7 +534,7 @@ public class POSForm extends javax.swing.JFrame {
                     .addComponent(jPanel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -748,91 +669,111 @@ public class POSForm extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
         previewBillTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "SR", "Prdct Name", "Price", "Qty", "Amount"
+                "SR", "Id", "Name", "Price", "Qty", "Amount"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Float.class, java.lang.String.class, java.lang.Float.class
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false, false, true
             };
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
-        previewBillTable.setGridColor(new java.awt.Color(255, 255, 255));
-        previewBillTable.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(previewBillTable);
+        jScrollPane4.setViewportView(previewBillTable);
         if (previewBillTable.getColumnModel().getColumnCount() > 0) {
-            previewBillTable.getColumnModel().getColumn(0).setMinWidth(28);
-            previewBillTable.getColumnModel().getColumn(0).setPreferredWidth(28);
-            previewBillTable.getColumnModel().getColumn(0).setMaxWidth(28);
-            previewBillTable.getColumnModel().getColumn(1).setMinWidth(112);
-            previewBillTable.getColumnModel().getColumn(1).setPreferredWidth(112);
-            previewBillTable.getColumnModel().getColumn(1).setMaxWidth(112);
-            previewBillTable.getColumnModel().getColumn(2).setMinWidth(56);
-            previewBillTable.getColumnModel().getColumn(2).setPreferredWidth(56);
-            previewBillTable.getColumnModel().getColumn(2).setMaxWidth(56);
-            previewBillTable.getColumnModel().getColumn(3).setMinWidth(28);
-            previewBillTable.getColumnModel().getColumn(3).setPreferredWidth(28);
-            previewBillTable.getColumnModel().getColumn(3).setMaxWidth(28);
-            previewBillTable.getColumnModel().getColumn(4).setMinWidth(56);
-            previewBillTable.getColumnModel().getColumn(4).setPreferredWidth(56);
-            previewBillTable.getColumnModel().getColumn(4).setMaxWidth(56);
+            previewBillTable.getColumnModel().getColumn(0).setMinWidth(40);
+            previewBillTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+            previewBillTable.getColumnModel().getColumn(0).setMaxWidth(40);
+            previewBillTable.getColumnModel().getColumn(1).setMinWidth(0);
+            previewBillTable.getColumnModel().getColumn(1).setPreferredWidth(0);
+            previewBillTable.getColumnModel().getColumn(1).setMaxWidth(0);
+            previewBillTable.getColumnModel().getColumn(2).setResizable(false);
+            previewBillTable.getColumnModel().getColumn(3).setMinWidth(60);
+            previewBillTable.getColumnModel().getColumn(3).setPreferredWidth(60);
+            previewBillTable.getColumnModel().getColumn(3).setMaxWidth(60);
+            previewBillTable.getColumnModel().getColumn(4).setMinWidth(40);
+            previewBillTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+            previewBillTable.getColumnModel().getColumn(4).setMaxWidth(40);
+            previewBillTable.getColumnModel().getColumn(5).setMinWidth(60);
+            previewBillTable.getColumnModel().getColumn(5).setPreferredWidth(60);
+            previewBillTable.getColumnModel().getColumn(5).setMaxWidth(60);
         }
 
         jButton1.setText("Check out");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Cancel");
+        jButton2.setText("Reset");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton2MouseClicked(evt);
             }
         });
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Update");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText("Delete");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2)
+                        .addGap(12, 12, 12)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
+                .addGap(6, 6, 6))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -844,17 +785,8 @@ public class POSForm extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(jButton1)
-                        .addGap(42, 42, 42)
-                        .addComponent(jButton2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -864,16 +796,10 @@ public class POSForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 16, Short.MAX_VALUE)
+                        .addGap(0, 19, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jButton1)
-                                    .addComponent(jButton2))))))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -887,14 +813,8 @@ public class POSForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void catergListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_catergListValueChanged
-        List<String> list = DishService.getCategory();
-        DefaultListModel<String> model = new DefaultListModel<>();
-        for (String cate : list){
-            model.addElement(cate);
-        }
-        catergList.setModel(model);
-        catergList.setCellRenderer(new CustomCellRenderer());
-        catergList = new javax.swing.JList<>();
+
+
     }//GEN-LAST:event_catergListValueChanged
 
     private void catergListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_catergListMouseClicked
@@ -906,8 +826,7 @@ public class POSForm extends javax.swing.JFrame {
     }//GEN-LAST:event_prodctTableMouseClicked
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
-        previewModel.setRowCount(0); // Xóa dữ liệu cũ
+
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void allCateLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_allCateLabelMouseClicked
@@ -917,10 +836,46 @@ public class POSForm extends javax.swing.JFrame {
     private void allCatePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_allCatePanelMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_allCatePanelMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        BillCheckOutForm b = new BillCheckOutForm(this, this.bill);
+        b.setLocationRelativeTo(null);
+        b.setVisible(true);
+        b.setDefaultCloseOperation(b.HIDE_ON_CLOSE);
+        b.setResizable(false);
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        handleBillReset();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int id = Integer.parseInt(previewBillTable.getValueAt(previewBillTable.getSelectedRow(), 1).toString());
+        String quantityCurr = previewBillTable.getValueAt(previewBillTable.getSelectedRow(), 4).toString();
+
+        String value = JOptionPane.showInputDialog("Quantity", quantityCurr);
+        if (value != null) {
+            if (validateNatualNumber(value)) {
+                int quantity = Integer.parseInt(value);
+                this.bill.updateByDishId(id, quantity);
+                handleTablePreview();
+            }
+        }
+
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+      int id = Integer.parseInt(previewBillTable.getValueAt(previewBillTable.getSelectedRow(), 1).toString());
+      this.bill.removeById(id);
+      handleTablePreview();
+    }//GEN-LAST:event_jButton4ActionPerformed
     private static class CustomCellRenderer extends DefaultListCellRenderer {
+
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                      boolean isSelected, boolean cellHasFocus) {
+                boolean isSelected, boolean cellHasFocus) {
             JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             // Thiết lập viền cho JLabel
@@ -932,6 +887,7 @@ public class POSForm extends javax.swing.JFrame {
             return label;
         }
     }
+
     /**
      * @param args the command line arguments
      */
@@ -962,7 +918,7 @@ public class POSForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
+
                 new POSForm().setVisible(true);
             }
         });
@@ -977,6 +933,8 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JLabel dinInIcon2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
@@ -992,9 +950,9 @@ public class POSForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private java.awt.Menu menu1;
     private java.awt.Menu menu2;
     private java.awt.Menu menu3;

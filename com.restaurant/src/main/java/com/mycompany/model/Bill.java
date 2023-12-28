@@ -53,7 +53,13 @@ public class Bill {
     }
 
     public void add(Dish dish, int quantity) {
-        list.put(dish, quantity);
+        if(this.list.containsKey(dish)){
+            int oldQuantity = list.get(dish);
+             list.put(dish, oldQuantity + quantity );
+        }
+        else{
+             list.put(dish,  quantity );
+        }
     }
 
     public void remove(Dish dish) {
@@ -67,6 +73,26 @@ public class Bill {
         } else {
             list.remove(dish);
         }
+    }
+    public void updateByDishId(int dishId,int quantity){
+        Dish dish = findDishById(dishId);
+        this.update(dish,quantity);
+    }
+     public Dish findDishById(int targetId) {
+        for (Map.Entry<Dish, Integer> entry : list.entrySet()) {
+            Dish dish = entry.getKey();
+            if (dish.getId() == targetId) {
+                return dish; // Found the dish with the specified ID
+            }
+        }
+        return null; // Dish with the specified ID not found
+    }
+    public void removeById(int dishId){
+        Dish dish = this.findDishById(dishId);
+        this.remove(dish);
+    }
+    public void reset(){
+        this.list = new HashMap<>();
     }
  
     public BigDecimal calculateTotal() {
