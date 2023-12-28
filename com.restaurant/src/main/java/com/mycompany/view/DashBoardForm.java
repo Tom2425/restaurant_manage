@@ -5,6 +5,7 @@
 package com.mycompany.view;
 
 import com.mycompany.view.POSForm;
+import com.mycompany.view.LoginForm;
 import com.mycompany.model.Admin;
 import com.mycompany.model.Bill;
 import com.mycompany.model.Dish;
@@ -81,8 +82,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             int width = getWidth();
             int height = getHeight();
             
-            Color color2 = new Color(255,255,255);
-            Color color1 = new Color(157,98,245);
+            Color color1 = new Color(163,51,253);
+            Color color2 = new Color(157,98,245);
             GradientPaint gp = new GradientPaint(0, 0 , color1, 180, height, color2);
             g2d.setPaint(gp);
             g2d.fillRect(0, 0, width, height);
@@ -96,7 +97,7 @@ public class DashBoardForm extends javax.swing.JFrame {
             int height = getHeight();
             
             Color color2 = new Color(255,255,255);
-            Color color3 = new Color(0,190,255);
+            Color color3 = new Color(204,153,255);
             GradientPaint gp = new GradientPaint(0, 0 , color3, 180, height, color2);
             g2d.setPaint(gp);
             g2d.fillRect(0, 0, width, height);
@@ -341,6 +342,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         adminNameLabel = new javax.swing.JLabel();
         adminRoleLabel = new javax.swing.JLabel();
+        logoutBtn = new javax.swing.JLabel();
 
         dish.setBackground(new java.awt.Color(226, 215, 255));
         dish.setVerifyInputWhenFocusTarget(false);
@@ -410,8 +412,8 @@ public class DashBoardForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        menuTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
-        menuTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        menuTable.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        menuTable.setSelectionForeground(new java.awt.Color(255, 153, 51));
         jScrollPane2.setViewportView(menuTable);
         if (menuTable.getColumnModel().getColumnCount() > 0) {
             menuTable.getColumnModel().getColumn(0).setMinWidth(40);
@@ -495,8 +497,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         });
         staffTable.setRowHeight(40);
-        staffTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
-        staffTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        staffTable.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        staffTable.setSelectionForeground(new java.awt.Color(255, 153, 51));
         jScrollPane1.setViewportView(staffTable);
         if (staffTable.getColumnModel().getColumnCount() > 0) {
             staffTable.getColumnModel().getColumn(0).setMinWidth(40);
@@ -578,8 +580,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         });
         tableTable.setRowHeight(40);
-        tableTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
-        tableTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        tableTable.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        tableTable.setSelectionForeground(new java.awt.Color(255, 153, 51));
         jScrollPane4.setViewportView(tableTable);
         if (tableTable.getColumnModel().getColumnCount() > 0) {
             tableTable.getColumnModel().getColumn(0).setResizable(false);
@@ -645,8 +647,8 @@ public class DashBoardForm extends javax.swing.JFrame {
             }
         ));
         billTable.setRowHeight(25);
-        billTable.setSelectionBackground(new java.awt.Color(102, 204, 255));
-        billTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        billTable.setSelectionBackground(new java.awt.Color(255, 255, 204));
+        billTable.setSelectionForeground(new java.awt.Color(255, 153, 51));
         jScrollPane3.setViewportView(billTable);
         if (billTable.getColumnModel().getColumnCount() > 0) {
             billTable.getColumnModel().getColumn(0).setResizable(false);
@@ -781,7 +783,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(200, 400));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jPanel3.setBackground(new java.awt.Color(87, 9, 178));
+        jPanel3.setBackground(new java.awt.Color(204, 153, 255));
         jPanel3.setPreferredSize(new java.awt.Dimension(30, 50));
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -807,7 +809,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(120, 75, 211));
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Menu");
         menuItem.add(jLabel6);
 
@@ -823,7 +825,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(120, 75, 211));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Staff");
         staffItem.add(jLabel4);
 
@@ -838,7 +840,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(120, 75, 211));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Table");
         tableItem.add(jLabel3);
 
@@ -853,7 +855,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(120, 75, 211));
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Bill");
         tableItem1.add(jLabel5);
 
@@ -868,7 +870,7 @@ public class DashBoardForm extends javax.swing.JFrame {
         });
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(120, 75, 211));
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("POS");
         tableItem2.add(jLabel9);
 
@@ -880,12 +882,19 @@ public class DashBoardForm extends javax.swing.JFrame {
         adminNameLabel.setBackground(new java.awt.Color(255, 255, 255));
         adminNameLabel.setText("Name:  ");
         adminNameLabel.setPreferredSize(new java.awt.Dimension(35, 25));
-        jPanel5.add(adminNameLabel, java.awt.BorderLayout.PAGE_START);
+        jPanel5.add(adminNameLabel, java.awt.BorderLayout.CENTER);
 
         adminRoleLabel.setBackground(new java.awt.Color(255, 255, 255));
         adminRoleLabel.setText("Role: ");
         adminRoleLabel.setPreferredSize(new java.awt.Dimension(24, 25));
-        jPanel5.add(adminRoleLabel, java.awt.BorderLayout.CENTER);
+        jPanel5.add(adminRoleLabel, java.awt.BorderLayout.PAGE_END);
+
+        logoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/logout.png"))); // NOI18N
+        logoutBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logoutBtnMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -893,13 +902,19 @@ public class DashBoardForm extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel1.add(jPanel4, java.awt.BorderLayout.SOUTH);
@@ -1096,6 +1111,13 @@ public class DashBoardForm extends javax.swing.JFrame {
         handleBillTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void logoutBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutBtnMouseClicked
+        LoginForm logout = new LoginForm();
+        logout.setLocationRelativeTo(null);
+        logout.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_logoutBtnMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -1138,6 +1160,7 @@ public class DashBoardForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JLabel logoutBtn;
     private javax.swing.JTabbedPane mainBoard;
     private javax.swing.JPanel menuItem;
     private javax.swing.JPanel menuTab;
