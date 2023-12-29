@@ -131,13 +131,13 @@ public class POSForm extends javax.swing.JFrame {
         proModel.setRowCount(0);
 
         // Đặt số lượng cột hiển thị ảnh
-        int numImageColumns = 5;
+        int numImageColumns = 4;
 
         // Điều chỉnh kích thước của ảnh và panel
-        int imageWidth = 120;
-        int imageHeight = 120;
-        int panelWidth = imageWidth + 10; // Thêm khoảng trắng giữa ảnh và mô tả
-        int panelHeight = imageHeight + 20; // Đủ để chứa cả label mô tả
+        int imageWidth = 150;
+        int imageHeight = 150;
+        int panelWidth = imageWidth + 20; // Thêm khoảng trắng giữa ảnh và mô tả
+        int panelHeight = imageHeight + 25; // Đủ để chứa cả label mô tả
 
         // Tạo một mảng để lưu trữ tất cả các panel
         JPanel[][] imagePanels = new JPanel[dishList.size()][numImageColumns];
@@ -167,19 +167,28 @@ public class POSForm extends javax.swing.JFrame {
             } else {
                 originalImage = dish.getImageAsBufferedImage();
             }
-            Image scaledImage = HandleImage.getScaledImage(originalImage, 100, imageHeight);
+            Image scaledImage = HandleImage.getScaledImage(originalImage, imageWidth, imageHeight);
             ImageIcon icon = new ImageIcon(scaledImage);
             imageLabel.setIcon(icon);
 
             // Tạo label chứa mô tả
+            Dimension preferredSize = new Dimension(150, 10);
+            
             JLabel descriptionLabel = new JLabel(dish.getName());
+            descriptionLabel.setPreferredSize(preferredSize);
+            descriptionLabel.setHorizontalAlignment(JLabel.CENTER);
+            descriptionLabel.setVerticalAlignment(JLabel.CENTER);
             JLabel priceLabel = new JLabel("Price: " + dish.getPrice());
-
-            imagePanel.add(descriptionLabel, BorderLayout.CENTER);
-            imagePanel.add(imageLabel, BorderLayout.NORTH);
+            
+            priceLabel.setPreferredSize(preferredSize);
+            priceLabel.setHorizontalAlignment(JLabel.CENTER);
+            priceLabel.setVerticalAlignment(JLabel.CENTER);
+            
+            imagePanel.add(descriptionLabel, BorderLayout.NORTH);
+            imagePanel.add(imageLabel, BorderLayout.CENTER);
 
             imagePanel.add(priceLabel, BorderLayout.SOUTH);
-            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
+            imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Sử dụng BoxLayout để sắp xếp các thành phần theo chiều dọc
 
             // Thêm panel vào mảng
             imagePanels[rowCounter][columnCounter] = imagePanel;
@@ -619,13 +628,14 @@ public class POSForm extends javax.swing.JFrame {
         jScrollPane3.setViewportView(catergList);
 
         allCatePanel.setBackground(new java.awt.Color(255, 255, 255));
-        allCatePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        allCatePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         allCatePanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 allCatePanelMouseClicked(evt);
             }
         });
 
+        allCateLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         allCateLabel.setText("All Catergories");
         allCateLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -637,10 +647,7 @@ public class POSForm extends javax.swing.JFrame {
         allCatePanel.setLayout(allCatePanelLayout);
         allCatePanelLayout.setHorizontalGroup(
             allCatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, allCatePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(allCateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(allCateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         allCatePanelLayout.setVerticalGroup(
             allCatePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -667,39 +674,39 @@ public class POSForm extends javax.swing.JFrame {
 
         prodctTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "", "", "", "", ""
+                "", "", "", ""
             }
         ));
         prodctTable.setRowHeight(120);
