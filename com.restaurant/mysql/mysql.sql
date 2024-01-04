@@ -20,15 +20,13 @@ insert into admin (name,username,password,role,phone)
 values ("Long","long", "123123","admin","031323421");
 insert into admin (name,username,password,role,phone)
 values ("Hung","hung", "123123","staff","0923953421");
-
 create table dish(
 	id int not null auto_increment primary key,
-	name varchar(20) not null,
+	name varchar(50) not null,
     price DECIMAL(10, 2) not null,
-    category varchar(20),
+    category varchar(50),
     image mediumblob
 );
-
 INSERT INTO dish (name, price, category) VALUES ('Spaghetti Bolognese', 12.99, 'Italian');
 INSERT INTO dish (name, price, category) VALUES ('Chicken Tikka Masala', 15.99, 'Indian');
 INSERT INTO dish (name, price, category) VALUES ('Caesar Salad', 8.99, 'Salad');
@@ -37,16 +35,10 @@ INSERT INTO dish (name, price, category) VALUES ('Iced Tea', 1.99, 'Beverage');
 INSERT INTO dish (name, price, category) VALUES ('Orange Juice', 3.49, 'Beverage');
 select * from dish;
 select * from admin;
-create table dish(
-	id int not null auto_increment primary key,
-	name varchar(50) not null,
-    price DECIMAL(10, 2) not null,
-    category varchar(50),
-    image mediumblob
-);
+
 create table bill(
 	id int not null auto_increment primary key,
-	date datetime,
+	time datetime,
     price DECIMAL(10, 2) not null
 );
 create table billDish(
@@ -71,7 +63,7 @@ INSERT INTO dish (name, price, category) VALUES
 ('Poemecake', 9.99, 'Dessert'),
 ('Lemon tart', 5.24,'Dessert');
 -- Insert records into the bill table
-INSERT INTO bill (date, price) VALUES
+INSERT INTO bill (time, price) VALUES
 ('2023-12-15 12:30:00', 30.97),
 ('2023-12-16 13:45:00', 25.50);
 select * from dish;
