@@ -53,8 +53,6 @@ public class POSForm extends javax.swing.JFrame {
     /**
      * Creates new form POSForm
      */
-
-
     public POSForm() {
         setTitle("POS");
         this.bill = new Bill();
@@ -71,20 +69,23 @@ public class POSForm extends javax.swing.JFrame {
         catergList = new javax.swing.JList<>();
         handleOrderTable(null);
     }
+
     class gradientPanel extends JPanel {
-        protected void paintComponent(Graphics g){
+
+        protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
             int width = getWidth();
             int height = getHeight();
-            
-            Color color2 = new Color(255,255,255);
-            Color color1 = new Color(157,98,245);
-            GradientPaint gp = new GradientPaint(0, 0 , color1, 180, height, color2);
+
+            Color color2 = new Color(255, 255, 255);
+            Color color1 = new Color(157, 98, 245);
+            GradientPaint gp = new GradientPaint(0, 0, color1, 180, height, color2);
             g2d.setPaint(gp);
             g2d.fillRect(0, 0, width, height);
-            
+
         }
     }
+
     public boolean validateNatualNumber(String str) {
         String regex = "^[1-9][0-9]*$";
         String strr = str.trim();
@@ -106,12 +107,11 @@ public class POSForm extends javax.swing.JFrame {
         this.orderTable = table;
 
         if (this.orderTable == null) {
-            jLabel4.setText("Order");
-            jLabel6.setText("");
+            jLabel4.setText("Order ");
+            jLabel6.setText("takeaway");
         } else {
 
-
-            jLabel4.setText("Order for: ");
+            jLabel4.setText("Order for ");
             jLabel6.setText(table.getName());
         }
     }
@@ -169,17 +169,17 @@ public class POSForm extends javax.swing.JFrame {
 
             // Tạo label chứa mô tả
             Dimension preferredSize = new Dimension(150, 10);
-            
+
             JLabel descriptionLabel = new JLabel(dish.getName());
             descriptionLabel.setPreferredSize(preferredSize);
             descriptionLabel.setHorizontalAlignment(JLabel.CENTER);
             descriptionLabel.setVerticalAlignment(JLabel.CENTER);
             JLabel priceLabel = new JLabel("Price: " + dish.getPrice());
-            
+
             priceLabel.setPreferredSize(preferredSize);
             priceLabel.setHorizontalAlignment(JLabel.CENTER);
             priceLabel.setVerticalAlignment(JLabel.CENTER);
-            
+
             imagePanel.add(descriptionLabel, BorderLayout.NORTH);
             imagePanel.add(imageLabel, BorderLayout.CENTER);
 
@@ -223,7 +223,8 @@ public class POSForm extends javax.swing.JFrame {
     }
 
     public void handleBillReset() {
-        this.bill.reset();
+        this.bill = new Bill();
+        System.out.println("reset");
         handleTablePreview();
     }
 
@@ -239,7 +240,7 @@ public class POSForm extends javax.swing.JFrame {
             dishList = DishService.getByCategory(cate);
         }
 //        DefaultTableModel previewModel = (DefaultTableModel) previewBillTable.getModel();
-        int numImageColumns = 5;
+        int numImageColumns = 4;
 
         MouseListener[] mouseListeners = prodctTable.getMouseListeners();
         for (MouseListener listener : mouseListeners) {
@@ -507,6 +508,12 @@ public class POSForm extends javax.swing.JFrame {
                 .addGap(14, 14, 14))
         );
 
+        jPanel12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel12MouseClicked(evt);
+            }
+        });
+
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel11.setText("Take Away");
 
@@ -653,8 +660,10 @@ public class POSForm extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
             .addComponent(allCatePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -716,7 +725,7 @@ public class POSForm extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -852,7 +861,7 @@ public class POSForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(5, 5, 5)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -907,17 +916,13 @@ public class POSForm extends javax.swing.JFrame {
     }//GEN-LAST:event_allCatePanelMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (this.orderTable != null) {
-            BillCheckOutForm b = new BillCheckOutForm(this, this.bill);
-            b.setLocationRelativeTo(null);
-            b.setVisible(true);
-            b.setDefaultCloseOperation(b.HIDE_ON_CLOSE);
-            b.setResizable(false);
-        } else {
-            JOptionPane.showMessageDialog(this, "You must select a table to order before performing this action!");
-        }
 
-
+        BillCheckOutForm b = new BillCheckOutForm(this, this.bill);
+        b.setLocationRelativeTo(null);
+        b.setVisible(true);
+        b.setDefaultCloseOperation(b.HIDE_ON_CLOSE);
+        b.setResizable(false);
+        System.out.println("!!!!!!!!");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -962,6 +967,12 @@ public class POSForm extends javax.swing.JFrame {
         selectTableForm.setResizable(false);
         selectTableForm.setDefaultCloseOperation(selectTableForm.HIDE_ON_CLOSE);
     }//GEN-LAST:event_jPanel11MouseClicked
+
+    private void jPanel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel12MouseClicked
+       this.orderTable =null;
+       handleOrderTable(this.orderTable);
+       
+    }//GEN-LAST:event_jPanel12MouseClicked
     private static class CustomCellRenderer extends DefaultListCellRenderer {
 
         @Override

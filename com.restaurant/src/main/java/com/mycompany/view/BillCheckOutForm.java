@@ -157,13 +157,15 @@ public class BillCheckOutForm extends javax.swing.JFrame {
         try {
             this.bill.setTime(LocalDateTime.now());
             BillService.create(this.bill);
-            JOptionPane.showMessageDialog(rootPane, "Bill has submitted!", "Message", JOptionPane.INFORMATION_MESSAGE);
-            this.setVisible(false);
-            posForm.getOrderTable().setBill(bill.createCopy());
+            if(posForm.getOrderTable()!=null){
+                 posForm.getOrderTable().setBill(bill.createCopy());
+            }
             posForm.handleBillReset();
             posForm.handleOrderTable(null);
-            
+            JOptionPane.showMessageDialog(rootPane, "Bill has submitted!", "Message", JOptionPane.INFORMATION_MESSAGE);
+            this.setVisible(false);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
