@@ -74,6 +74,7 @@ public class Bill {
             list.remove(dish);
         }
     }
+    
     public void updateByDishId(int dishId,int quantity){
         Dish dish = findDishById(dishId);
         this.update(dish,quantity);
@@ -93,6 +94,10 @@ public class Bill {
     }
     public void reset(){
         this.list = new HashMap<>();
+    }
+
+    public void setList(Map<Dish, Integer> list) {
+        this.list = list;
     }
  
     public BigDecimal calculateTotal() {
@@ -114,5 +119,12 @@ public class Bill {
         }
         System.out.println("Total: " + String.valueOf(this.calculateTotal()) + "$");
          System.out.println("Time: " + String.valueOf(this.time));
+    }
+    public Bill createCopy(){
+        Bill b = new Bill();
+        b.setId(this.id);
+        b.setTime(this.time);
+        b.setList(this.list);
+        return b;
     }
 }

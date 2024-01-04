@@ -27,8 +27,9 @@ public class AdminDAO extends DAO {
     public static List<Admin> getAll() {
 
         List<Admin> admins = new ArrayList<Admin>();
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from admin;";
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
@@ -43,14 +44,24 @@ public class AdminDAO extends DAO {
             return admins;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return admins;
     }
 
     public static Admin getByUsername(String username) {
         Admin admin = null;
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from admin where username = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
 
@@ -72,12 +83,22 @@ public class AdminDAO extends DAO {
 
             e.printStackTrace();
             return admin;
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
     }
 
     public static void create(Admin admin) {
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO admin (name, username, password, role, phone) VALUES(?, ?, ?, ?, ?)";
             System.out.print(admin.toString());
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
@@ -90,14 +111,24 @@ public class AdminDAO extends DAO {
             System.out.print(rs);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
 
     }
 
     public static Admin login(String username, String password) {
         Admin a = new Admin();
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from admin where username= ? and password = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setString(1, username);
@@ -117,13 +148,23 @@ public class AdminDAO extends DAO {
             return a;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return a;
     }
 
     public static void delete(int id) {
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "delete from admin where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setInt(1, id);
@@ -132,13 +173,23 @@ public class AdminDAO extends DAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
     }
 
     public static Admin getById(int id) {
         Admin a = new Admin();
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from admin where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setInt(1, id);
@@ -157,14 +208,23 @@ public class AdminDAO extends DAO {
             return a;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return a;
     }
 
     public static void update(Admin admin) {
+        Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "update admin set name = ?, username = ?, password = ?, role = ?, phone = ? where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
 
@@ -179,6 +239,15 @@ public class AdminDAO extends DAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
     }
 

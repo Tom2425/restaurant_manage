@@ -12,13 +12,20 @@ public class Table {
      private int id;
      private String name;
      private String status;
-
+     private Bill bill;
     public Table(int id, String name, String status) {
         this.id = id;
         this.name = name;
         this.status = status;
     }
 
+    public Table(int id, String name, String status, Bill bill) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.bill = bill;
+    }
+    
     public Table() {
     }
 
@@ -46,6 +53,15 @@ public class Table {
         this.status = status;
     }
 
+    public Bill getBill() {
+        return bill;
+    }
+
+    public void setBill(Bill bill) {
+        this.bill = bill;
+
+    }
+    
     @Override
     public String toString() {
         return "Table{" + "id=" + id + ", name=" + name + ", status=" + status + '}';

@@ -28,9 +28,43 @@ public class JDBCConnection {
         }
         return null;
     }
-    public static void a(){
-        
-        System.out.print("test texet");
+     public static void close(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // Log or handle the exception appropriately
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void close(Statement statement) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                // Log or handle the exception appropriately
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void close(ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                // Log or handle the exception appropriately
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void close(Connection connection, Statement statement, ResultSet resultSet) {
+        close(resultSet);
+        close(statement);
+        close(connection);
     }
 
 }

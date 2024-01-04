@@ -22,9 +22,11 @@ import java.util.List;
  * @author Admin
  */
 public class DishDAO {
-    public DishDAO(){
+
+    public DishDAO() {
         super();
     }
+
     public static Dish createDishFromBlob(Blob blob) {
         Dish dish = new Dish();
         try {
@@ -38,11 +40,12 @@ public class DishDAO {
         }
         return dish;
     }
+
     public static List<Dish> getAll() {
         List<Dish> dishs = new ArrayList<Dish>();
+        Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from dish";
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
@@ -63,13 +66,23 @@ public class DishDAO {
             return dishs;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return dishs;
     }
 
     public static void create(Dish dish) {
+        Connection connect = null;
         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO dish (name, price, category ,image) VALUES (?, ?, ?, ?);";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setString(1, dish.getName());
@@ -87,33 +100,52 @@ public class DishDAO {
             System.out.print(rs);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
 
     }
-      public static void delete(int id){
-         try {
-            Connection connect = JDBCConnection.getJDBCConnection();
+
+    public static void delete(int id) {
+        Connection connect = null;
+        try {
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "delete from dish where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
             preparedStatment.setInt(1, id);
-             preparedStatment.executeUpdate();
+            preparedStatment.executeUpdate();
             System.out.println("Delete dish " + id);
 
-          
-   
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
     }
-    public static Dish getById(int id){
-        
-        Dish dish = null;
-        try {
 
-            Connection connect = JDBCConnection.getJDBCConnection();
+    public static Dish getById(int id) {
+
+        Dish dish = null;
+        Connection connect = null;
+        try {
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from dish where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
-            preparedStatment.setInt(1,id);
+            preparedStatment.setInt(1, id);
             ResultSet rs = preparedStatment.executeQuery();
             while (rs.next()) {
                 dish = new Dish();
@@ -127,22 +159,32 @@ public class DishDAO {
                     byte[] imageBytes = blob.getBytes(1, blobLength);
                     dish.setImage(imageBytes);
                 }
-                
+
             }
             return dish;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return dish;
     }
-    public static void update(Dish dish){
 
+    public static void update(Dish dish) {
+
+        Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "update dish set name = ?, price = ?, category = ? ,image = ? where id = ?";
             PreparedStatement preparedStatment = connect.prepareStatement(sql);
-           
+
             preparedStatment.setString(1, dish.getName());
             preparedStatment.setBigDecimal(2, dish.getPrice());
             preparedStatment.setString(3, dish.getCategory());
@@ -154,42 +196,61 @@ public class DishDAO {
                 System.out.print("Image is null");
                 preparedStatment.setNull(4, Types.BLOB);
             }
-            preparedStatment.setInt(5,dish.getId());
+            preparedStatment.setInt(5, dish.getId());
             System.out.println(dish.toString());
             preparedStatment.executeUpdate();
-            
-   
+
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-  
-    }
-    public static List<String> getCategory(){
-      
-        List<String> categories = new ArrayList<String>();
-        try {
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
 
-            Connection connect = JDBCConnection.getJDBCConnection();
+        }
+
+    }
+
+    public static List<String> getCategory() {
+
+        List<String> categories = new ArrayList<String>();
+        Connection connect = null;
+        try {
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select distinct category from dish";
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
             while (rs.next()) {
-        
+
                 categories.add(rs.getString("category"));
             }
             return categories;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return categories;
-   
-    }
-    public static List<Dish> getByCategory(String category){
-      
-        List<Dish> dishs = new ArrayList<Dish>();
-        try {
 
-            Connection connect = JDBCConnection.getJDBCConnection();
+    }
+
+    public static List<Dish> getByCategory(String category) {
+
+        List<Dish> dishs = new ArrayList<Dish>();
+        Connection connect = null;
+        try {
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "select * from dish where category = ?";
             PreparedStatement preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setString(1, category);
@@ -211,8 +272,17 @@ public class DishDAO {
             return dishs;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return dishs;
-   
+
     }
 }
