@@ -29,9 +29,8 @@ public class LoginForm extends javax.swing.JFrame {
     public LoginForm() {
         initComponents();
 
-              
     }
-    
+
     /* class gradientPanel extends JPanel {
         protected void paintComponent(Graphics g){
             Graphics2D g2d = (Graphics2D) g;
@@ -46,7 +45,7 @@ public class LoginForm extends javax.swing.JFrame {
             
         }
     }
-    */
+     */
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -238,18 +237,26 @@ public class LoginForm extends javax.swing.JFrame {
     private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_passwordFieldActionPerformed
-    
+
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         String username = usernameField.getText();
         String password = String.valueOf(passwordField.getPassword());
         Admin adminAuth = login(username, password);
         if (adminAuth != null) {
-            DashBoardForm dbForm = new DashBoardForm(adminAuth);
-            dbForm.setLocationRelativeTo(null);
-            dbForm.setVisible(true);
-            this.dispose();
+            if (adminAuth.getRole().equals("admin")) {
+                DashBoardForm dbForm = new DashBoardForm(adminAuth);
+                dbForm.setLocationRelativeTo(null);
+                dbForm.setVisible(true);
+                this.dispose();
+            } else {
+                POSForm pos = new POSForm();
+                pos.setVisible(true);
+                pos.setLocationRelativeTo(null);
+                pos.setResizable(false);
+            }
+
         }
-        
+
 
     }//GEN-LAST:event_loginBtnActionPerformed
 

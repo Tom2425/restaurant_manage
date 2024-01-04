@@ -992,7 +992,7 @@ public class DashBoardForm extends javax.swing.JFrame {
     }//GEN-LAST:event_tableItem1MouseClicked
 
     private void tableItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableItem2MouseClicked
-        POSForm posForm = new POSForm(this);
+        POSForm posForm = new POSForm();
         posForm.setLocationRelativeTo(null);
         posForm.setDefaultCloseOperation(POSForm.DISPOSE_ON_CLOSE);
         posForm.setVisible(true);

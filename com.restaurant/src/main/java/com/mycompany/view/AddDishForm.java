@@ -35,32 +35,36 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Admin
  */
 public class AddDishForm extends javax.swing.JFrame {
+
     private DashBoardForm dashBoard;
+
     /**
      * Creates new form AddDish
      */
     public AddDishForm() {
-         initComponents();
-         customeConponent();
+        initComponents();
+        customeConponent();
     }
-    public AddDishForm(DashBoardForm dashBoard){
+
+    public AddDishForm(DashBoardForm dashBoard) {
         this.dashBoard = dashBoard;
         initComponents();
         customeConponent();
-        
     }
+
     class gradientPanelbackground extends JPanel {
-        protected void paintComponent(Graphics gr){
+
+        protected void paintComponent(Graphics gr) {
             Graphics2D g2d = (Graphics2D) gr;
             int width = getWidth();
             int height = getHeight();
-            
-            Color color2 = new Color(255,255,255);
-            Color color3 = new Color(0,190,255);
-            GradientPaint gp = new GradientPaint(0, 0 , color3, 180, height, color2);
+
+            Color color2 = new Color(255, 255, 255);
+            Color color3 = new Color(0, 190, 255);
+            GradientPaint gp = new GradientPaint(0, 0, color3, 180, height, color2);
             g2d.setPaint(gp);
             g2d.fillRect(0, 0, width, height);
-            
+
         }
     }
 
@@ -101,19 +105,19 @@ public class AddDishForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Type field mustn't be empty", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-    }  
-   private void loadImage(String imagePath,boolean isAbsolutePath) {
+    }
+
+    private void loadImage(String imagePath, boolean isAbsolutePath) {
         try {
             File selectedFile = null;
-            if(isAbsolutePath == false){
+            if (isAbsolutePath == false) {
                 URL url = getClass().getResource(imagePath);
                 selectedFile = new File(url.getPath());
-            }
-            else{
-                 
+            } else {
+
                 selectedFile = new File(imagePath);
             }
-           
+
             BufferedImage originalImage = ImageIO.read(selectedFile);
 
             int labelWidth = imageLabel.getWidth();
@@ -127,10 +131,11 @@ public class AddDishForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error loading image: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
- 
-    private void customeConponent(){
-       loadImage("/image/image.png", false);
+
+    private void customeConponent() {
+        loadImage("/image/image.png", false);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -395,39 +400,44 @@ public class AddDishForm extends javax.swing.JFrame {
 
     private void addDishBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDishBtnActionPerformed
         Dish dish = new Dish();
-        File imageFile = new File(imagePath);
+
         try {
-            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
-            if ( validateNameField() && validatePriceField() && validateCategoryField()) {
-            dish.setName(nameField.getText());
-            dish.setPrice(BigDecimal.valueOf(Double.valueOf(priceField.getText())));
-            dish.setCategory(categoryField.getText());
-            dish.setImage(imageBytes);
-            DishService.create(dish);
-            this.setVisible(false);
-            this.dashBoard.handleMenuTable();
-        }
+            byte[] imageBytes = null;
+            if (imagePath != null) {
+                File imageFile = new File(imagePath);
+                imageBytes = Files.readAllBytes(imageFile.toPath());
+            }
+
+            if (validateNameField() && validatePriceField() && validateCategoryField()) {
+                dish.setName(nameField.getText());
+                dish.setPrice(BigDecimal.valueOf(Double.valueOf(priceField.getText())));
+                dish.setCategory(categoryField.getText());
+                dish.setImage(imageBytes);
+                DishService.create(dish);
+                this.setVisible(false);
+                this.dashBoard.handleMenuTable();
+            }
         } catch (IOException ex) {
             Logger.getLogger(AddDishForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-      
+
 
     }//GEN-LAST:event_addDishBtnActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // using this code you can brows image and image set to lable
-        
-        JFileChooser fchooser=new JFileChooser();
+
+        JFileChooser fchooser = new JFileChooser();
         fchooser.showOpenDialog(null);
-        FileNameExtensionFilter fnwf = new FileNameExtensionFilter("PNG JPG AND JPEG","png","jpg","and","jpeg");
+        FileNameExtensionFilter fnwf = new FileNameExtensionFilter("PNG JPG AND JPEG", "png", "jpg", "and", "jpeg");
         int load = fchooser.showOpenDialog(null);
-        if(load == fchooser.APPROVE_OPTION){
+        if (load == fchooser.APPROVE_OPTION) {
             File f = fchooser.getSelectedFile();
             String path = f.getAbsolutePath();
             imagePath = path;
-            loadImage(path,true);
+            loadImage(path, true);
         }
- 
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

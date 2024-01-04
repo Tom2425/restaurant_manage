@@ -31,9 +31,9 @@ public class BillDAO {
 
     public static List<Bill> getAll() {
         List<Bill> list = new ArrayList<Bill>();
+        Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id";
             Statement statment = connect.createStatement();
             ResultSet rs = statment.executeQuery(sql);
@@ -58,15 +58,24 @@ public class BillDAO {
             return list;
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return list;
     }
 
     public static List<Bill> getWithDate(LocalDate d1, LocalDate d2) {
         List<Bill> list = new ArrayList<Bill>();
+        Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id where time between ? and ?";
             PreparedStatement preparedstatment = connect.prepareStatement(sql);
             preparedstatment.setDate(1, Date.valueOf(d1));
@@ -93,6 +102,15 @@ public class BillDAO {
             return list;
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return list;
     }
@@ -100,9 +118,9 @@ public class BillDAO {
     public static Bill getById(int id) {
 
         Bill bill = null;
+       Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "SELECT b.id AS bill_id, b.time, b.price AS bill_price, d.id AS dish_id, d.name, d.price AS dish_price, bd.quantity FROM bill b JOIN billDish bd ON b.id = bd.billId JOIN dish d ON bd.dishId = d.id where b.id = ?";
             PreparedStatement preparedstatment = connect.prepareStatement(sql);
             preparedstatment.setInt(1, id);
@@ -127,14 +145,23 @@ public class BillDAO {
             return bill;
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
         return bill;
     }
 
     public static void create(Bill bill) {
+        Connection connect = null;
         try {
-
-            Connection connect = JDBCConnection.getJDBCConnection();
+            connect = JDBCConnection.getJDBCConnection();
             String sql = "INSERT INTO bill (time, price) VALUES" + "(? , ?)";
             PreparedStatement billPreparedstatment = connect.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
             billPreparedstatment.setObject(1, bill.getTime());
@@ -168,6 +195,15 @@ public class BillDAO {
             
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
+            if (connect != null) {
+                try {
+                    connect.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();  // Handle the exception appropriately
+                }
+            }
+
         }
     }
 
